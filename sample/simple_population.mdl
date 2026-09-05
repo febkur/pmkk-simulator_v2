@@ -1,0 +1,53 @@
+{UTF-8}
+Population= INTEG (
+	Births-Deaths,
+	100)
+	~ People
+	~ @output label="Population"
+	|
+
+Births=Population*Birth Rate
+	~ People/Year
+	~ @output label="Births per year"
+	|
+
+Deaths=Population*Death Rate
+	~ People/Year
+	~ @output label="Deaths per year"
+	|
+
+Birth Rate=0.03
+	~ 1/Year
+	~ @input min=0 max=0.08 step=0.001 label="Birth rate"
+	|
+
+Death Rate=0.015
+	~ 1/Year
+	~ @input min=0 max=0.08 step=0.001 label="Death rate"
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 50
+	~ Year
+	~ The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~ Year
+	~ The initial time for the simulation.
+	|
+
+SAVEPER  = TIME STEP
+	~ Year
+	~ The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.25
+	~ Year
+	~ The time step for the simulation.
+	|
