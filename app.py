@@ -740,7 +740,7 @@ def render_simulator(upload: dict) -> None:
         with st.container(key="control_panel"):
             title_col, reset_col = st.columns([2.2, 1], vertical_alignment="center")
             with title_col:
-                st.markdown('<div class="section-title">Assumptions</div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-title">Faktor Input</div>', unsafe_allow_html=True)
             with reset_col:
                 st.button("Reset", on_click=reset_sliders, use_container_width=True)
 
