@@ -718,7 +718,7 @@ def render_simulator(upload: dict) -> None:
 
     header_left, header_middle, header_right = st.columns([4.6, 2.4, 1.1], vertical_alignment="center")
     with header_left:
-        st.markdown('<div class="eyebrow">System Dynamics Playground</div>', unsafe_allow_html=True)
+        st.markdown('<div class="eyebrow">Dynamic System Deputi Bidang Pemberdayaan Masyarakat, Kependudukan, dan Ketenagakerjaan</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="sim-title">{metadata.name}</div>', unsafe_allow_html=True)
     with header_middle:
         time_unit = metadata.time.get("unit") or "time"
