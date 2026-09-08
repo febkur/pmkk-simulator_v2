@@ -729,7 +729,7 @@ def render_simulator(upload: dict) -> None:
             unsafe_allow_html=True,
         )
     with header_right:
-        if st.button("Change model", use_container_width=True):
+        if st.button("Ganti Model", use_container_width=True):
             clear_model()
             st.rerun()
 
