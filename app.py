@@ -44,8 +44,9 @@ BASE_CSS = """
         text-transform: none;
         font-weight: 650;
         opacity: .62;
-        margin-bottom: .3rem;
-        max-width: 34rem;
+        margin: 0 auto .3rem auto;
+        max-width: 40rem;
+        text-align: center;
     }
 
     .hero-title {
@@ -953,7 +954,7 @@ def render_simulator(upload: dict) -> None:
 
     with graph_col:
         with st.container(key="chart_panel"):
-            st.markdown('<div class="section-title">Outcomes</div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-title">Grafik Hasil</div>', unsafe_allow_html=True)
 
             baseline_params = {item.name: float(item.default) for item in metadata.inputs}
 
