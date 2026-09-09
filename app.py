@@ -771,7 +771,7 @@ def build_outcome_figure(
     fig.update_layout(
         autosize=True,
         height=700,
-        margin=dict(l=24, r=12, t=68, b=18),
+        margin=dict(l=24, r=12, t=112, b=18),
         hovermode="closest",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -779,11 +779,14 @@ def build_outcome_figure(
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.015,
-            xanchor="left",
-            x=0,
+            y=1.105,
+            xanchor="center",
+            x=0.5,
             font=dict(size=10),
-            bgcolor="rgba(0,0,0,0)",
+            bgcolor="rgba(15,23,42,0.78)",
+            bordercolor="rgba(148,163,184,0.18)",
+            borderwidth=1,
+            itemsizing="constant",
         ),
     )
     fig.update_annotations(font_size=11)
@@ -862,11 +865,9 @@ def render_simulator(upload: dict) -> None:
         )
         st.markdown(f'<div class="sim-title">{metadata.name}</div>', unsafe_allow_html=True)
     with header_middle:
-        time_unit = metadata.time.get("unit") or "time"
         st.markdown(
-            f'<div class="sim-meta">{format_number(metadata.time["initial"])} → '
-            f'{format_number(metadata.time["final"])} {time_unit} &nbsp;·&nbsp; '
-            f'{len(metadata.inputs)} inputs &nbsp;·&nbsp; {len(metadata.outputs)} outcomes</div>',
+            f'<div class="sim-meta">{format_number(metadata.time["initial"])} - '
+            f'{format_number(metadata.time["final"])}</div>',
             unsafe_allow_html=True,
         )
     with header_right:
@@ -948,15 +949,11 @@ def render_simulator(upload: dict) -> None:
                 if len(saved_scenarios) >= MAX_SAVED_SCENARIOS:
                     st.caption(f"Maksimum {MAX_SAVED_SCENARIOS} skenario tersimpan. Hapus skenario untuk membuat yang baru.")
                 else:
-                    st.caption("Atur slider lalu simpan. Baseline selalu ditampilkan sebagai pembanding.")
+                    st.caption("Geser slider untuk melihat dampak.")
 
     with graph_col:
         with st.container(key="chart_panel"):
-            title_left, note_right = st.columns([1.3, 2.7], vertical_alignment="center")
-            with title_left:
-                st.markdown('<div class="section-title">Outcomes</div>', unsafe_allow_html=True)
-            with note_right:
-                st.caption("↑/↓ = lebih tinggi/rendah dari baseline, bukan berarti lebih baik/buruk.")
+            st.markdown('<div class="section-title">Outcomes</div>', unsafe_allow_html=True)
 
             baseline_params = {item.name: float(item.default) for item in metadata.inputs}
 
