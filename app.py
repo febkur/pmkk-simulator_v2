@@ -672,8 +672,20 @@ def build_outcome_figure(
             f"{format_number(final_value)}{unit} · {delta}</span>"
         )
 
-    vertical_spacing = 0.12 if rows <= 2 else max(0.045, min(0.085, 0.22 / rows))
-    horizontal_spacing = 0.08 if cols <= 2 else 0.055
+    # Keep subplot titles, x-axis ticks, and the next row from colliding.
+    # More rows get a taller canvas and controlled vertical gaps.
+    if rows <= 1:
+        vertical_spacing = 0.08
+    elif rows == 2:
+        vertical_spacing = 0.18
+    elif rows == 3:
+        vertical_spacing = 0.145
+    elif rows == 4:
+        vertical_spacing = 0.105
+    else:
+        vertical_spacing = min(0.09, 0.34 / max(rows - 1, 1))
+
+    horizontal_spacing = 0.09 if cols <= 2 else 0.065
 
     fig = make_subplots(
         rows=rows,
@@ -772,8 +784,10 @@ def build_outcome_figure(
             showgrid=False,
             zeroline=False,
             nticks=5,
-            tickfont=dict(size=9),
+            tickfont=dict(size=8),
             title_font=dict(size=9),
+            automargin=True,
+            ticklabelstandoff=4,
             row=row,
             col=col,
         )
@@ -783,16 +797,22 @@ def build_outcome_figure(
             gridcolor="rgba(127,127,127,0.13)",
             zeroline=False,
             nticks=5,
-            tickfont=dict(size=9),
+            tickfont=dict(size=8),
             title_font=dict(size=9),
+            automargin=True,
+            title_standoff=7,
             row=row,
             col=col,
         )
 
+    # A fixed 700px canvas was too short for 3+ rows and caused labels to collide.
+    # Scale the canvas with the number of output rows instead.
+    figure_height = max(700, 260 * rows + 150)
+
     fig.update_layout(
         autosize=True,
-        height=700,
-        margin=dict(l=24, r=12, t=112, b=18),
+        height=figure_height,
+        margin=dict(l=38, r=20, t=120, b=34),
         hovermode="closest",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -810,7 +830,10 @@ def build_outcome_figure(
             itemsizing="constant",
         ),
     )
-    fig.update_annotations(font_size=11)
+    fig.update_annotations(
+        font_size=10,
+        yshift=10,
+    )
     return fig
 
 
@@ -977,7 +1000,12 @@ def render_simulator(upload: dict) -> None:
 
     with graph_col:
         with st.container(key="chart_panel"):
-            st.markdown('<div class="section-title">Grafik Hasil</div>', unsafe_allow_html=True)
+            initial_year = format_number(metadata.time["initial"])
+            final_year = format_number(metadata.time["final"])
+            st.markdown(
+                f'<div class="section-title">Grafik Hasil (Tahun {initial_year}-{final_year})</div>',
+                unsafe_allow_html=True,
+            )
 
             baseline_params = {item.name: float(item.default) for item in metadata.inputs}
 
