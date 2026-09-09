@@ -49,6 +49,26 @@ BASE_CSS = """
         text-align: center;
     }
 
+    .sim-page-title {
+        width: 100%;
+        text-align: center;
+        font-size: clamp(1.05rem, 1.45vw, 1.38rem);
+        line-height: 1.25;
+        letter-spacing: -.012em;
+        font-weight: 720;
+        opacity: .94;
+        margin: .15rem auto .8rem auto;
+        padding: 0 10rem;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 900px) {
+        .sim-page-title {
+            padding: 0 1rem;
+            font-size: 1rem;
+        }
+    }
+
     .hero-title {
         font-size: clamp(1.9rem, 3.4vw, 3.2rem);
         line-height: 1.02;
@@ -857,17 +877,20 @@ def render_simulator(upload: dict) -> None:
     st.session_state.setdefault("scenario_counter", 0)
     st.session_state.setdefault("active_param_override", {})
 
+    # Full-width title: centered relative to the entire website.
+    st.markdown(
+        '<div class="sim-page-title">Dynamic System lingkup Deputi Bidang '
+        'Pemberdayaan Masyarakat, Kependudukan, dan Ketenagakerjaan</div>',
+        unsafe_allow_html=True,
+    )
+
     header_left, header_middle, header_right = st.columns([4.6, 2.4, 1.1], vertical_alignment="center")
     with header_left:
-        st.markdown(
-            '<div class="eyebrow">Dynamic System lingkup Deputi Bidang '
-            'Pemberdayaan Masyarakat, Kependudukan, dan Ketenagakerjaan</div>',
-            unsafe_allow_html=True,
-        )
         st.markdown(f'<div class="sim-title">{metadata.name}</div>', unsafe_allow_html=True)
     with header_middle:
         st.markdown(
-            f'<div class="sim-meta">{format_number(metadata.time["initial"])} - '
+            f'<div class="sim-meta" style="text-align:center;">'
+            f'{format_number(metadata.time["initial"])} - '
             f'{format_number(metadata.time["final"])}</div>',
             unsafe_allow_html=True,
         )
