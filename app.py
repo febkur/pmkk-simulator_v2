@@ -966,7 +966,7 @@ def render_simulator(upload: dict) -> None:
                 save_col, clear_col = st.columns(2)
                 with save_col:
                     save_requested = st.button(
-                        "＋ Simpan skenario",
+                        "＋ Tambah skenario",
                         use_container_width=True,
                         disabled=len(saved_scenarios) >= MAX_SAVED_SCENARIOS or not metadata.inputs,
                     )
