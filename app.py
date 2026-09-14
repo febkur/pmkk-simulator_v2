@@ -696,12 +696,46 @@ def build_outcome_figure(
     )
 
     time_label = metadata.time.get("unit") or "Time"
-    baseline_style = dict(color="#64748b", width=1.7, dash="dash")
-    active_style = dict(color="#22d3ee", width=2.5)
+    # Smooth only the visual connection between simulated time points.
+    # This does NOT modify the values returned by the Vensim/PySD model.
+    spline_shape = "spline"
+    spline_smoothing = 0.55
+
+    baseline_style = dict(
+        color="#64748b",
+        width=1.7,
+        dash="dash",
+        shape=spline_shape,
+        smoothing=spline_smoothing,
+    )
+    active_style = dict(
+        color="#22d3ee",
+        width=2.5,
+        shape=spline_shape,
+        smoothing=spline_smoothing,
+    )
     saved_styles = [
-        dict(color="#a78bfa", width=1.9, dash="dot"),
-        dict(color="#34d399", width=1.9, dash="dashdot"),
-        dict(color="#f59e0b", width=1.9, dash="longdash"),
+        dict(
+            color="#a78bfa",
+            width=1.9,
+            dash="dot",
+            shape=spline_shape,
+            smoothing=spline_smoothing,
+        ),
+        dict(
+            color="#34d399",
+            width=1.9,
+            dash="dashdot",
+            shape=spline_shape,
+            smoothing=spline_smoothing,
+        ),
+        dict(
+            color="#f59e0b",
+            width=1.9,
+            dash="longdash",
+            shape=spline_shape,
+            smoothing=spline_smoothing,
+        ),
     ]
 
     for index, output in enumerate(outputs):
@@ -966,7 +1000,7 @@ def render_simulator(upload: dict) -> None:
                 save_col, clear_col = st.columns(2)
                 with save_col:
                     save_requested = st.button(
-                        "＋ Tambah skenario",
+                        "＋ Simpan skenario",
                         use_container_width=True,
                         disabled=len(saved_scenarios) >= MAX_SAVED_SCENARIOS or not metadata.inputs,
                     )
