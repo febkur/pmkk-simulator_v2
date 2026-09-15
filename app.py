@@ -1037,7 +1037,7 @@ def render_simulator(upload: dict) -> None:
             initial_year = format_number(metadata.time["initial"])
             final_year = format_number(metadata.time["final"])
             st.markdown(
-                f'<div class="section-title">Grafik Hasil dari Tahun {initial_year} sampai {final_year})</div>',
+                f'<div class="section-title">Grafik Hasil dari Tahun {initial_year} sampai {final_year}</div>',
                 unsafe_allow_html=True,
             )
 
