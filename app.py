@@ -6,6 +6,7 @@ import re
 import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
+from openpyxl import load_workbook
 from pathlib import Path
 
 import pandas as pd
@@ -578,199 +579,159 @@ def load_indicator_catalog() -> tuple[
     str | None,
     str,
 ]:
-    """Read the official PMKK catalogue directly from the XLSX package.
+    """Find and read the real PMKK indicator catalogue anywhere in the repo.
 
-    This avoids dependency/version issues in pandas/openpyxl for this small
-    reference table. The workbook itself is still a normal .xlsx file.
+    Instead of trusting the first file named IndikatorPMKK.xlsx, this scans all
+    Excel workbooks in the deployed repository and all their sheets. A sheet is
+    accepted only when it actually contains the logical catalogue headers:
+    UKE II, Nomor, and Indikator Nasional.
 
-    Returns:
-        catalog: {(directorate, indicator_number): official_name}
-        path: workbook path, if found
-        status: diagnostic string
+    This also solves cases where a duplicate Excel file with only "Sheet1"
+    appears earlier in the filesystem.
     """
-    path = _find_indicator_catalog_path()
-    if path is None:
+    base = Path(__file__).resolve().parent
+
+    excel_files = sorted(
+        path
+        for path in base.rglob("*")
+        if path.is_file()
+        and path.suffix.lower() in {".xlsx", ".xlsm"}
+        and not path.name.startswith("~$")
+    )
+
+    if not excel_files:
         return {}, None, "file_not_found"
 
-    try:
-        main_ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-        rel_doc_ns = (
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-        )
+    def normalise_text(value: object) -> str:
+        if value is None:
+            return ""
+        return re.sub(r"\s+", " ", str(value).strip()).lower()
 
-        with zipfile.ZipFile(path) as workbook_zip:
-            filenames = set(workbook_zip.namelist())
+    def find_catalog_columns(ws):
+        """Return (header_row, uke_col, nomor_col, indicator_col) or None."""
+        max_scan_rows = min(ws.max_row or 1, 25)
+        max_scan_cols = min(ws.max_column or 1, 30)
 
-            # Shared strings hold most text values in ordinary .xlsx files.
-            shared_strings: list[str] = []
-            if "xl/sharedStrings.xml" in filenames:
-                shared_root = ET.fromstring(
-                    workbook_zip.read("xl/sharedStrings.xml")
-                )
-                for item in shared_root.findall(f"{{{main_ns}}}si"):
-                    parts = [
-                        node.text or ""
-                        for node in item.iter(f"{{{main_ns}}}t")
-                    ]
-                    shared_strings.append("".join(parts))
+        for row_idx in range(1, max_scan_rows + 1):
+            uke_col = None
+            nomor_col = None
+            indicator_col = None
 
-            workbook_root = ET.fromstring(
-                workbook_zip.read("xl/workbook.xml")
-            )
-            relationships_root = ET.fromstring(
-                workbook_zip.read("xl/_rels/workbook.xml.rels")
-            )
+            for col_idx in range(1, max_scan_cols + 1):
+                value = normalise_text(ws.cell(row=row_idx, column=col_idx).value)
 
-            relationship_targets = {
-                rel.attrib["Id"]: rel.attrib["Target"]
-                for rel in relationships_root
-            }
+                if uke_col is None and (
+                    value == "uke ii"
+                    or "uke ii" in value
+                    or value == "direktorat"
+                ):
+                    uke_col = col_idx
 
-            sheets: list[tuple[str, str]] = []
-            sheets_element = workbook_root.find(f"{{{main_ns}}}sheets")
-            if sheets_element is None:
-                return {}, str(path), "workbook_has_no_sheets"
+                if nomor_col is None and (
+                    value == "nomor"
+                    or value == "no"
+                    or value == "no."
+                ):
+                    nomor_col = col_idx
 
-            for sheet in sheets_element:
-                sheet_name = sheet.attrib.get("name", "")
-                relationship_id = sheet.attrib.get(
-                    f"{{{rel_doc_ns}}}id",
-                    "",
-                )
-                target = relationship_targets.get(relationship_id)
-                if not target:
-                    continue
-
-                if target.startswith("/"):
-                    worksheet_path = target.lstrip("/")
-                elif target.startswith("xl/"):
-                    worksheet_path = target
-                else:
-                    worksheet_path = f"xl/{target}"
-
-                sheets.append((sheet_name, worksheet_path))
-
-            def normalise_sheet_name(value: str) -> str:
-                return re.sub(r"[^a-z0-9]", "", value.lower())
-
-            selected_sheet: tuple[str, str] | None = None
-
-            # Exact preferred sheet.
-            for sheet_name, worksheet_path in sheets:
-                if normalise_sheet_name(sheet_name) == "1general":
-                    selected_sheet = (sheet_name, worksheet_path)
-                    break
-
-            # Fallback if workbook naming changes slightly.
-            if selected_sheet is None:
-                for sheet_name, worksheet_path in sheets:
-                    if "general" in normalise_sheet_name(sheet_name):
-                        selected_sheet = (sheet_name, worksheet_path)
-                        break
-
-            if selected_sheet is None:
-                available = ", ".join(name for name, _ in sheets)
-                return {}, str(path), f"sheet_not_found|{available}"
-
-            sheet_name, worksheet_path = selected_sheet
-            if worksheet_path not in filenames:
-                return {}, str(path), (
-                    f"worksheet_xml_not_found|{sheet_name}|{worksheet_path}"
-                )
-
-            worksheet_root = ET.fromstring(
-                workbook_zip.read(worksheet_path)
-            )
-
-            def cell_value(cell: ET.Element) -> str:
-                cell_type = cell.attrib.get("t")
-                value_node = cell.find(f"{{{main_ns}}}v")
-
-                if cell_type == "s" and value_node is not None:
-                    try:
-                        index = int(value_node.text or "")
-                    except ValueError:
-                        return ""
-                    if 0 <= index < len(shared_strings):
-                        return shared_strings[index]
-                    return ""
-
-                if cell_type == "inlineStr":
-                    inline = cell.find(f"{{{main_ns}}}is")
-                    if inline is None:
-                        return ""
-                    return "".join(
-                        node.text or ""
-                        for node in inline.iter(f"{{{main_ns}}}t")
+                if indicator_col is None and (
+                    value == "indikator nasional"
+                    or (
+                        "indikator" in value
+                        and "nasional" in value
                     )
-
-                if value_node is not None:
-                    return value_node.text or ""
-
-                return ""
-
-            rows: list[dict[str, str]] = []
-            sheet_data = worksheet_root.find(
-                f".//{{{main_ns}}}sheetData"
-            )
-            if sheet_data is None:
-                return {}, str(path), f"sheet_has_no_data|{sheet_name}"
-
-            for row in sheet_data.findall(f"{{{main_ns}}}row"):
-                values: dict[str, str] = {}
-                for cell in row.findall(f"{{{main_ns}}}c"):
-                    reference = cell.attrib.get("r", "")
-                    column_match = re.match(r"[A-Z]+", reference)
-                    if not column_match:
-                        continue
-                    column = column_match.group(0)
-                    values[column] = cell_value(cell)
-                rows.append(values)
-
-        # The uploaded PMKK workbook uses:
-        # B = UKE II, C = Nomor, D = Indikator Nasional.
-        # Directorates are written once and inherited by following rows.
-        catalog: dict[tuple[str, str], str] = {}
-        current_directorate: str | None = None
-
-        for row in rows:
-            directorate_raw = row.get("B", "")
-            indicator_raw = row.get("C", "")
-            indicator_name = row.get("D", "").strip()
-
-            directorate_code = _catalog_directorate_code(
-                directorate_raw
-            )
-            if directorate_code:
-                current_directorate = directorate_code
-
-            indicator_id = _catalog_indicator_id(indicator_raw)
+                ):
+                    indicator_col = col_idx
 
             if (
-                current_directorate
-                and indicator_id
-                and indicator_name
-                and indicator_name.lower() != "indikator nasional"
+                uke_col is not None
+                and nomor_col is not None
+                and indicator_col is not None
             ):
-                catalog[
-                    (current_directorate, indicator_id)
-                ] = indicator_name
+                return row_idx, uke_col, nomor_col, indicator_col
 
-        if not catalog:
-            return {}, str(path), f"empty_catalog|{sheet_name}"
+        return None
 
-        return (
-            catalog,
-            str(path),
-            f"ok|{sheet_name}|{len(catalog)}",
+    examined: list[str] = []
+
+    for workbook_path in excel_files:
+        try:
+            workbook = load_workbook(
+                workbook_path,
+                read_only=True,
+                data_only=True,
+            )
+        except Exception as exc:
+            examined.append(
+                f"{workbook_path.name}: tidak dapat dibuka ({type(exc).__name__})"
+            )
+            continue
+
+        examined.append(
+            f"{workbook_path.name}: {', '.join(workbook.sheetnames)}"
         )
 
-    except zipfile.BadZipFile:
-        return {}, str(path), "read_error|BadZipFile"
-    except Exception as exc:
-        return {}, str(path), (
-            f"read_error|{type(exc).__name__}|{exc}"
-        )
+        for sheet_name in workbook.sheetnames:
+            ws = workbook[sheet_name]
+            detected = find_catalog_columns(ws)
+
+            if detected is None:
+                continue
+
+            header_row, uke_col, nomor_col, indicator_col = detected
+
+            catalog: dict[tuple[str, str], str] = {}
+            current_directorate: str | None = None
+
+            for row_idx in range(header_row + 1, (ws.max_row or header_row) + 1):
+                directorate_raw = ws.cell(
+                    row=row_idx,
+                    column=uke_col,
+                ).value
+                number_raw = ws.cell(
+                    row=row_idx,
+                    column=nomor_col,
+                ).value
+                indicator_raw = ws.cell(
+                    row=row_idx,
+                    column=indicator_col,
+                ).value
+
+                directorate_code = _catalog_directorate_code(directorate_raw)
+                if directorate_code:
+                    current_directorate = directorate_code
+
+                indicator_id = _catalog_indicator_id(number_raw)
+                indicator_name = (
+                    str(indicator_raw).strip()
+                    if indicator_raw is not None
+                    else ""
+                )
+
+                if (
+                    current_directorate
+                    and indicator_id
+                    and indicator_name
+                    and indicator_name.lower() != "indikator nasional"
+                ):
+                    catalog[
+                        (current_directorate, indicator_id)
+                    ] = indicator_name
+
+            if catalog:
+                return (
+                    catalog,
+                    str(workbook_path),
+                    (
+                        f"ok|{sheet_name}|{len(catalog)}|"
+                        f"{workbook_path.name}"
+                    ),
+                )
+
+    # No workbook/sheet in the entire deployed repository looked like the
+    # PMKK catalogue. Include what was inspected so the UI can explain it.
+    diagnostic = " || ".join(examined)
+    return {}, None, f"catalog_not_found|{diagnostic}"
 
 
 def official_indicator_name(output, catalog: dict[tuple[str, str], str]) -> str:
@@ -1681,10 +1642,16 @@ def render_simulator(upload: dict) -> None:
                 unsafe_allow_html=True,
             )
 
-            if indicator_catalog_path is None:
+            if catalog_status.startswith("catalog_not_found|"):
+                diagnostic = catalog_status.split("|", 1)[1]
                 st.caption(
-                    "IndikatorPMKK.xlsx belum ditemukan di deployment Streamlit. "
-                    "Pastikan file sudah di-commit pada repository/branch yang sama."
+                    "Belum ditemukan sheet katalog yang memiliki kolom UKE II, Nomor, "
+                    "dan Indikator Nasional. File/sheet yang diperiksa: "
+                    f"{diagnostic}"
+                )
+            elif indicator_catalog_path is None:
+                st.caption(
+                    "Belum ditemukan file Excel katalog PMKK yang valid di deployment Streamlit."
                 )
             elif not indicator_catalog:
                 if catalog_status.startswith("sheet_not_found|"):
