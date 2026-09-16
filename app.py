@@ -523,16 +523,51 @@ def _catalog_indicator_id(value: object) -> str | None:
 
 
 def _find_indicator_catalog_path() -> Path | None:
+    """Find the PMKK Excel catalogue anywhere inside the deployed repository.
+
+    This intentionally tolerates:
+    - root or data/ placement
+    - different capitalization
+    - spaces / dashes / underscores
+    - browser-renamed copies such as "IndikatorPMKK (1).xlsx"
+    """
     base = Path(__file__).resolve().parent
-    candidates = [
+
+    # Fast path for the two recommended locations.
+    recommended = [
         base / "data" / "IndikatorPMKK.xlsx",
         base / "IndikatorPMKK.xlsx",
     ]
-    for candidate in candidates:
-        if candidate.exists():
+    for candidate in recommended:
+        if candidate.is_file():
             return candidate
-    matches = list(base.rglob("IndikatorPMKK.xlsx"))
-    return matches[0] if matches else None
+
+    def normalized_stem(path: Path) -> str:
+        return re.sub(r"[^a-z0-9]", "", path.stem.lower())
+
+    # Search every Excel workbook shipped with the Streamlit deployment.
+    excel_files = sorted(
+        [
+            path
+            for path in base.rglob("*")
+            if path.is_file() and path.suffix.lower() in {".xlsx", ".xls"}
+        ]
+    )
+
+    # Strong match first: indikatorpmkk, including variants such as
+    # IndikatorPMKK (1).xlsx or indikator_pmkk.xlsx.
+    for path in excel_files:
+        stem = normalized_stem(path)
+        if stem.startswith("indikatorpmkk"):
+            return path
+
+    # Looser fallback in case the file was renamed slightly.
+    for path in excel_files:
+        stem = normalized_stem(path)
+        if "indikator" in stem and "pmkk" in stem:
+            return path
+
+    return None
 
 
 @st.cache_data(show_spinner=False)
@@ -1479,8 +1514,9 @@ def render_simulator(upload: dict) -> None:
 
             if indicator_catalog_path is None:
                 st.caption(
-                    "IndikatorPMKK.xlsx belum ditemukan. Website sementara memakai nama variabel Vensim. "
-                    "Simpan Excel di data/IndikatorPMKK.xlsx atau di root repository."
+                    "IndikatorPMKK.xlsx belum ditemukan di deployment Streamlit. "
+                    "Pastikan file sudah di-commit pada repository dan branch yang sama dengan app, "
+                    "lalu Reboot app. Lokasi yang disarankan: data/IndikatorPMKK.xlsx."
                 )
             elif not indicator_catalog:
                 st.caption(
