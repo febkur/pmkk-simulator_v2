@@ -1,0 +1,676 @@
+{UTF-8}
+"Jumlah Tenaga Kerja Informal (Pop) [a]"= INTEG (
+	Penambahan Jumlah Tenaga Kerja Informal-Pengurangan Jumlah Tenaga Kerja Informal,
+		"Jumlah Penduduk (Pop)")
+	~	Pop
+	~	@output
+	|
+
+"Jumlah Penduduk (Pop)"=
+	5000
+	~	Pop
+	~	@input min=0 max=10000 step=1
+	|
+
+Penambahan Jumlah Lapangan Usaha Jasa Rendah=
+	"Jumlah Tenaga Kerja Formal (Pop)"*Spillover Lapangan Usaha Jasa Tinggi ke Jasa Rendah
+	~	Pop
+	~		|
+
+Jumlah Lapangan Usaha Jasa Rendah= INTEG (
+	Penambahan Jumlah Lapangan Usaha Jasa Rendah,
+		50)
+	~	Pop
+	~		|
+
+Jumlah Angkatan Kerja=
+	"TOTAL Jumlah Tenaga Kerja (Pop)"+"Jumlah Pengangguran (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Informal u Tenaaga kerja BARU High Skilled (b) (Pop)"=
+	Rasio XXB*Jumlah Lapangan Usaha Jasa Rendah
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Informal u Tenaga Kerja BARU Low Skilled (c) (Pop)"=
+	Rasio YYC*Jumlah Lapangan Usaha Jasa Rendah
+	~	Pop
+	~		|
+
+"Jumlah Konversi tenaga kerja BARU High Skilled menuju Informal (Pop)"=
+	IF THEN ELSE( Rasio XB<1 , "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"\
+		*Rasio XB , "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]" )
+	~	Pop
+	~		|
+
+Penambahan Jumlah Lapangan Usaha Jasa Tinggi=
+	"Jumlah Perusahaan StartUp (Unit)"*"Multiplikasi StartUp (Pop/Unit)"+"Jumlah Perusahaan Korporasi (Unit)"\
+		*"Multiplikasi Korporasi (Pop/Unit)"
+	~	Pop
+	~		|
+
+"Jumlah konversi tenaga kerja BARU Low Skilled menuju Informal (Pop)"=
+	IF THEN ELSE(Rasio YC<1, "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"\
+		*Rasio YC , "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]" )
+	~	Pop
+	~		|
+
+Pengurangan Jumlah Tenaga Kerja BARU High Skilled=
+	IF THEN ELSE(Rasio B<1, "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"\
+		*(1-Rasio B) , "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"
+	 )+IF THEN ELSE(Rasio XB<1, "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"\
+		*(1-Rasio XB) , "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]" )
+	~	Pop
+	~		|
+
+Pengurangan Jumlah Tenaga Kerja BARU Low Skilled=
+	IF THEN ELSE(Rasio C<1, "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"\
+		*(1-Rasio C) , "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]")+IF THEN ELSE\
+		( Rasio YC<1 , "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"*(1-Rasio YC\
+		) , "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]" )
+	~	Pop
+	~		|
+
+Spillover Lapangan Usaha Jasa Tinggi ke Jasa Rendah=
+	5
+	~	Pop
+	~	@input min=0 max=20 step=5
+	|
+
+Persentase Pengangguran=
+	"Jumlah Pengangguran (Pop)"/Jumlah Angkatan Kerja
+	~	Dmnl
+	~		|
+
+Rasio XB=
+	"Jumlah Lapangan Kerja Informal u Tenaaga kerja BARU High Skilled (b) (Pop)"/"Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"
+	~	Dmnl
+	~		|
+
+Rasio YC=
+	"Jumlah Lapangan Kerja Informal u Tenaga Kerja BARU Low Skilled (c) (Pop)"/"Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"
+	~	Dmnl
+	~		|
+
+Rasio YYC=
+	0.3
+	~	Dmnl
+	~		|
+
+Rasio XXB=
+	0.7
+	~	Dmnl
+	~		|
+
+"TOTAL Jumlah Tenaga Kerja (Pop)"=
+	"Jumlah Tenaga Kerja Formall (Pop)"+"Jumlah Tenaga Kerja Informal (Pop)"
+	~	Pop
+	~		|
+
+Penambahan Jumlah Tenaga Kerja Informal=
+	"Jumlah Konversi tenaga kerja BARU High Skilled menuju Informal (Pop)"+"Jumlah konversi tenaga kerja BARU Low Skilled menuju Informal (Pop)"
+	~	Pop
+	~		|
+
+Jumlah Lapangan Usaha Jasa Tinggi= INTEG (
+	Penambahan Jumlah Lapangan Usaha Jasa Tinggi-Pengurangan Jumlah Lapangan Usaha Jasa Tinggi\
+		,
+		10)
+	~	Pop
+	~		|
+
+Persentase Nontradeable Services=
+	"PDRB NonTradeable Services (Rp)"/"PDRB Sektor Jasa (Rp)"
+	~	Dmnl
+	~		|
+
+Sisa Lapangan Kerja c=
+	IF THEN ELSE(Rasio C>1, "Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU Low Skilled (c) (Pop)"\
+		*(1/Rasio C) , "Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU Low Skilled (c) (Pop)"\
+		 )
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)"=
+	Jumlah Lapangan Usaha Jasa Tinggi*Rasio BB
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU Low Skilled (c) (Pop)"=
+	Jumlah Lapangan Usaha Jasa Tinggi*Rasio CC
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Formal u Tenaga Kerja Informal (a) (Pop)"=
+	Jumlah Lapangan Usaha Jasa Tinggi*Rasio AA
+	~	Pop
+	~		|
+
+Pengurangan Jumlah Lapangan Usaha Jasa Tinggi=
+	Sisa Jumlah Lapangan Kerja a+Sisa Lapangan Kerja b+Sisa Lapangan Kerja c
+	~	Pop
+	~		|
+
+Sisa Jumlah Lapangan Kerja a=
+	IF THEN ELSE(RasioA>1, "Jumlah Lapangan Kerja Formal u Tenaga Kerja Informal (a) (Pop)"\
+		*(1/RasioA) , "Jumlah Lapangan Kerja Formal u Tenaga Kerja Informal (a) (Pop)" )
+	~	Pop
+	~		|
+
+Sisa Lapangan Kerja b=
+	IF THEN ELSE(Rasio B>1, "Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)"\
+		*(1/Rasio B) , "Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)"\
+		 )
+	~	Pop
+	~		|
+
+Total Jumlah Kelas Menengah Bawah=
+	"Jumlah Kelas Menengah Bawah/Low Skilled (Pop)"+"Migrasi Kelas Menengah Kelas Bawah/Low Skilled (Pop)"
+	~	Pop
+	~	@output directorate=PKKS indicator=1
+	|
+
+Persentase Tradeable Service=
+	"PDRB Tradeable Services (Rp)"/"PDRB Sektor Jasa (Rp)"
+	~	
+	~		|
+
+"Jumlah Kelas Menengah Bawah/Low Skilled (Pop)"=
+	"Jumlah Tenaga Kerja Informal (Pop) [a]"
+	~	Pop
+	~	@output
+	|
+
+"Jumlah Kelas Menengah/High Skilled (Pop)"=
+	"Jumlah Tenaga Kerja Formal (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah konversi tenaga kerja BARU High Skilled menuju Formal (Pop)"=
+	IF THEN ELSE(Rasio B<1, "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"\
+		*Rasio B , "Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]" )
+	~	Pop
+	~		|
+
+"Jumlah konversi tenaga kerja BARU Low Skilled menuju Formal (Pop)"=
+	IF THEN ELSE(Rasio C<1, "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"\
+		*Rasio C , "Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]" )
+	~	Pop
+	~		|
+
+"Jumlah konversi tenaga kerja informal menuju Formal (Pop)"=
+	IF THEN ELSE(RasioA<1, "Jumlah Tenaga Kerja Informal (Pop) [a]"*RasioA , "Jumlah Tenaga Kerja Informal (Pop) [a]"\
+		 )
+	~	Pop
+	~		|
+
+"Jumlah Perusahaan Korporasi (Unit)"=
+	10
+	~	Unit
+	~	@input min=0 max=100 step=5
+	|
+
+"Jumlah Perusahaan StartUp (Unit)"=
+	10
+	~	Unit
+	~	@input min=0 max=100 step=5
+	|
+
+"Jumlah Pengangguran (Pop)"=
+	"Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"+"Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"
+	~	Pop
+	~	@output directorate=Naker indicator=40
+	|
+
+"Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"= INTEG (
+	Penambahan Jumlah Tenaga Kerja BARU High Skilled-Pengurangan Jumlah Tenaga Kerja BARU High Skilled\
+		,
+		500)
+	~	Pop
+	~		|
+
+"Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"= INTEG (
+	Penambahan Jumlah Tenaga Kerja BARU Low Skilled-Pengurangan Jumlah Tenaga Kerja BARU Low Skilled\
+		,
+		500)
+	~	Pop
+	~		|
+
+"Jumlah Tenaga Kerja Formal (Pop)"= INTEG (
+	Penambahan Jumlah Tenaga Kerja Formal,
+		1)
+	~	Pop
+	~	@output directorate=Naker indicator=39
+	|
+
+"Jumlah Tenaga Kerja Formall (Pop)"=
+	"Jumlah Tenaga Kerja Formal (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Tenaga Kerja Informal (Pop)"=
+	"Jumlah Tenaga Kerja Informal (Pop) [a]"
+	~	Pop
+	~		|
+
+"Kelahiran Menengah (Pop)"=
+	"Jumlah Kelas Menengah/High Skilled (Pop)"*1+"Migrasi Kelas Menengah Kelas Menengah/High Skilled (Pop)"\
+		*1
+	~	Pop
+	~		|
+
+"Kelahiran Menengah Bawah (Pop)"=
+	"Jumlah Kelas Menengah Bawah/Low Skilled (Pop)"*1+"Migrasi Kelas Menengah Kelas Bawah/Low Skilled (Pop)"\
+		*1
+	~	Pop
+	~		|
+
+"Migrasi High Skilled Worker (Pop)"=
+	10
+	~	Pop
+	~		|
+
+"Migrasi Kelas Menengah Kelas Bawah/Low Skilled (Pop)"=
+	20
+	~	Pop
+	~		|
+
+"Migrasi Kelas Menengah Kelas Menengah/High Skilled (Pop)"=
+	15
+	~	Pop
+	~		|
+
+"Migrasi Low Skilled Worker (Pop)"=
+	10
+	~	Pop
+	~		|
+
+"Multiplikasi Korporasi (Pop/Unit)"=
+	20
+	~	Pop/Unit
+	~		|
+
+"Multiplikasi StartUp (Pop/Unit)"=
+	20
+	~	Pop/Unit
+	~		|
+
+"PDRB NonTradeable Services (Rp)"=
+	"Jumlah Tenaga Kerja Informal (Pop)"*"Produktivitas Informal (Rp/Pop)"
+	~	Rp
+	~		|
+
+"PDRB Sektor Jasa (Rp)"=
+	"PDRB Tradeable Services (Rp)"+"PDRB NonTradeable Services (Rp)"
+	~	Rp
+	~	@output
+	|
+
+"PDRB Tradeable Services (Rp)"=
+	"Jumlah Tenaga Kerja Formall (Pop)"*"Produktivitas Formal (Rp/Pop)"
+	~	Rp
+	~		|
+
+Penambahan Jumlah Tenaga Kerja BARU High Skilled=
+	"Kelahiran Menengah (Pop)"*1+"Migrasi High Skilled Worker (Pop)"*1
+	~	Pop
+	~		|
+
+Penambahan Jumlah Tenaga Kerja BARU Low Skilled=
+	"Kelahiran Menengah Bawah (Pop)"*1+"Migrasi Low Skilled Worker (Pop)"*1
+	~	Pop
+	~		|
+
+Penambahan Jumlah Tenaga Kerja Formal=
+	"Jumlah konversi tenaga kerja informal menuju Formal (Pop)"+"Jumlah konversi tenaga kerja BARU Low Skilled menuju Formal (Pop)"\
+		+"Jumlah konversi tenaga kerja BARU High Skilled menuju Formal (Pop)"
+	~	Pop
+	~		|
+
+Pengurangan Jumlah Tenaga Kerja Informal=
+	IF THEN ELSE(RasioA<1, "Jumlah Tenaga Kerja Informal (Pop) [a]"*(1-RasioA) , "Jumlah Tenaga Kerja Informal (Pop) [a]"\
+		 )
+	~	Pop
+	~		|
+
+Persentase Tenaga Kerja Formal=
+	"Jumlah Tenaga Kerja Formall (Pop)"/"TOTAL Jumlah Tenaga Kerja (Pop)"
+	~	Dmnl
+	~	@output
+	|
+
+Persentase Tenaga Kerja Informal=
+	"Jumlah Tenaga Kerja Informal (Pop)"/"TOTAL Jumlah Tenaga Kerja (Pop)"
+	~	Dmnl
+	~	@output
+	|
+
+"Produktivitas Formal (Rp/Pop)"=
+	0.376
+	~	Rp/Pop
+	~	@input min=0 max=1 step=1
+	|
+
+"Produktivitas Informal (Rp/Pop)"=
+	0.113
+	~	Rp/Pop
+	~	@input min=0 max=0.5 step=1
+	|
+
+Rasio AA=
+	0.3
+	~	Dmnl
+	~		|
+
+Rasio BB=
+	0.5
+	~	Dmnl
+	~		|
+
+Rasio B=
+	"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)"/"Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]"
+	~	Dmnl
+	~		|
+
+Rasio CC=
+	0.2
+	~	Dmnl
+	~		|
+
+Rasio C=
+	"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU Low Skilled (c) (Pop)"/"Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]"
+	~	Dmnl
+	~		|
+
+RasioA=
+	"Jumlah Lapangan Kerja Formal u Tenaga Kerja Informal (a) (Pop)"/"Jumlah Tenaga Kerja Informal (Pop) [a]"
+	~	Dmnl
+	~		|
+
+Total Jumlah Kelas Menengah=
+	"Jumlah Kelas Menengah/High Skilled (Pop)"+"Migrasi Kelas Menengah Kelas Menengah/High Skilled (Pop)"
+	~	Pop
+	~	@output directorate=KJS indicator=25
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 2045
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 2025
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 1
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,49,0
+10,1,"Jumlah Perusahaan StartUp (Unit)",-281,819,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,2,"Jumlah Perusahaan Korporasi (Unit)",-54,823,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,3,"Produktivitas Formal (Rp/Pop)",2166,24,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,4,"Jumlah Pengangguran (Pop)",2283,656,71,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-64-128,0,0,0,0,0,0
+10,5,"TOTAL Jumlah Tenaga Kerja (Pop)",2342,437,69,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-0-128,0,0,0,0,0,0
+10,6,Persentase Tenaga Kerja Formal,2601,249,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,7,Persentase Tenaga Kerja Informal,2609,441,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,8,Persentase Pengangguran,2607,659,45,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,9,"Jumlah Kelas Menengah/High Skilled (Pop)",1492,1394,57,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-128-0,0,0,0,0,0,0
+10,10,"Jumlah Kelas Menengah Bawah/Low Skilled (Pop)",2053,1385,88,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-255-0,0,0,0,0,0,0
+10,11,"Produktivitas Informal (Rp/Pop)",2617,6,59,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,12,"PDRB Tradeable Services (Rp)",1955,-109,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,13,"PDRB NonTradeable Services (Rp)",2248,-110,70,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,14,"PDRB Sektor Jasa (Rp)",2081,-237,45,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,15,"Kelahiran Menengah (Pop)",1554,1509,59,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-128-0,0,0,0,0,0,0
+10,16,"Kelahiran Menengah Bawah (Pop)",2136,1493,64,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-255-0,0,0,0,0,0,0
+10,17,"Migrasi Kelas Menengah Kelas Menengah/High Skilled (Pop)",1246,1509,91,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-128-0,0,0,0,0,0,0
+10,18,"Migrasi Kelas Menengah Kelas Bawah/Low Skilled (Pop)",2363,1370,91,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-255-0,0,0,0,0,0,0
+10,19,"Migrasi High Skilled Worker (Pop)",1004,1285,73,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|128-64-0,0,0,0,0,0,0
+10,20,"Migrasi Low Skilled Worker (Pop)",2340,1255,71,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|255-128-0,0,0,0,0,0,0
+1,21,12,14,0,0,0,0,0,64,0,-1--1--1,,1|(2012,-168)|
+1,22,13,14,0,0,0,0,0,64,0,-1--1--1,,1|(2170,-169)|
+1,23,3,12,0,0,0,0,0,64,0,-1--1--1,,1|(2066,-38)|
+1,24,11,13,0,0,0,0,0,64,0,-1--1--1,,1|(2439,-49)|
+1,25,5,6,0,0,0,0,0,64,0,-1--1--1,,1|(2465,347)|
+1,26,5,7,0,0,0,0,0,64,0,-1--1--1,,1|(2473,438)|
+1,27,4,8,0,0,0,0,0,64,0,-1--1--1,,1|(2451,656)|
+1,28,18,16,0,0,0,0,0,64,0,-1--1--1,,1|(2255,1428)|
+1,29,10,16,0,0,0,0,0,64,0,-1--1--1,,1|(2086,1428)|
+1,30,9,15,0,0,0,0,0,64,0,-1--1--1,,1|(1521,1449)|
+1,31,17,15,0,0,0,0,0,64,0,-1--1--1,,1|(1409,1509)|
+10,32,"Multiplikasi StartUp (Pop/Unit)",-391,769,64,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,33,"Multiplikasi Korporasi (Pop/Unit)",-145,765,69,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,"Jumlah Lapangan Kerja Formal u Tenaga Kerja Informal (a) (Pop)",802,249,75,28,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||0-128-0,0,0,0,0,0,0
+10,35,"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)",798,451,100,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,36,"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU Low Skilled (c) (Pop)",801,663,100,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,37,Rasio AA,133,226,32,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,38,Rasio BB,291,228,31,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,39,Rasio CC,477,243,32,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,40,37,34,1,0,0,0,0,64,0,-1--1--1,,1|(699,217)|
+1,41,38,35,1,0,0,0,0,64,0,-1--1--1,,1|(491,347)|
+1,42,39,36,1,0,0,0,0,64,0,-1--1--1,,1|(568,593)|
+10,43,RasioA,1062,247,25,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,44,Rasio B,1062,458,26,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,45,Rasio C,1058,667,27,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,46,34,43,0,0,0,0,0,64,0,-1--1--1,,1|(950,248)|
+1,47,35,44,0,0,0,0,0,64,0,-1--1--1,,1|(960,454)|
+1,48,36,45,0,0,0,0,0,64,0,-1--1--1,,1|(959,664)|
+10,49,"Jumlah konversi tenaga kerja informal menuju Formal (Pop)",1060,154,73,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,50,"Jumlah konversi tenaga kerja BARU High Skilled menuju Formal (Pop)",1057,373,92,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,51,"Jumlah konversi tenaga kerja BARU Low Skilled menuju Formal (Pop)",1052,578,92,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,52,45,51,0,0,0,0,0,64,0,-1--1--1,,1|(1056,637)|
+1,53,44,50,0,0,0,0,0,64,0,-1--1--1,,1|(1060,430)|
+10,54,Total Jumlah Kelas Menengah,1006,1355,69,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-64-0,0,0,0,0,0,0
+1,55,17,54,1,0,0,0,0,64,0,-1--1--1,,1|(1036,1450)|
+1,56,9,54,1,0,0,0,0,64,0,-1--1--1,,1|(1322,1329)|
+10,57,"Jumlah Tenaga Kerja Formal (Pop)",1532,152,123,24,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,58,"Jumlah Tenaga Kerja BARU Low Skilled/Pengangguran (Pop) [c]",1643,660,233,32,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,59,"Jumlah Tenaga Kerja BARU High Skilled/Pengangguran (Pop) [b]",1641,478,229,34,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,60,"Jumlah Tenaga Kerja Informal (Pop) [a]",1641,289,233,33,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,61,48,2030,298,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,62,64,60,4,0,0,22,0,0,0,-1--1--1,,1|(1914,302)|
+1,63,64,61,100,0,0,22,0,0,0,-1--1--1,,1|(1993,302)|
+11,64,48,1961,302,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,65,Penambahan Jumlah Tenaga Kerja Informal,1961,329,72,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,66,48,2036,476,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,67,69,59,4,0,0,22,0,0,0,-1--1--1,,1|(1904,476)|
+1,68,69,66,100,0,0,22,0,0,0,-1--1--1,,1|(1988,476)|
+11,69,48,1945,476,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,70,Penambahan Jumlah Tenaga Kerja BARU High Skilled,1945,512,85,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,71,48,2048,666,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,72,74,58,4,0,0,22,0,0,0,-1--1--1,,1|(1913,666)|
+1,73,74,71,100,0,0,22,0,0,0,-1--1--1,,1|(2000,666)|
+11,74,48,1957,666,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,75,Penambahan Jumlah Tenaga Kerja BARU Low Skilled,1957,702,85,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,76,48,1204,656,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,77,79,76,4,0,0,22,0,0,0,-1--1--1,,1|(1260,656)|
+1,78,79,58,100,0,0,22,0,0,0,-1--1--1,,1|(1364,656)|
+11,79,48,1312,656,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,80,Pengurangan Jumlah Tenaga Kerja BARU Low Skilled,1312,692,85,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,81,48,1216,476,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,82,84,81,4,0,0,22,0,0,0,-1--1--1,,1|(1269,476)|
+1,83,84,59,100,0,0,22,0,0,0,-1--1--1,,1|(1368,476)|
+11,84,48,1319,476,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,85,Pengurangan Jumlah Tenaga Kerja BARU High Skilled,1319,512,85,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,86,48,1222,286,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,87,89,86,4,0,0,22,0,0,0,-1--1--1,,1|(1273,286)|
+1,88,89,60,100,0,0,22,0,0,0,-1--1--1,,1|(1367,286)|
+11,89,48,1320,286,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,90,Pengurangan Jumlah Tenaga Kerja Informal,1320,313,72,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,91,48,1207,158,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,92,94,57,4,0,0,22,0,0,0,-1--1--1,,1|(1364,158)|
+1,93,94,91,100,0,0,22,0,0,0,-1--1--1,,1|(1262,158)|
+11,94,48,1313,158,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,95,Penambahan Jumlah Tenaga Kerja Formal,1313,185,69,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,96,49,95,1,0,0,0,0,64,0,-1--1--1,,1|(1215,42)|
+1,97,50,95,1,0,0,0,0,64,0,-1--1--1,,1|(1131,222)|
+1,98,51,95,1,0,0,0,0,64,0,-1--1--1,,1|(1129,294)|
+1,99,60,43,1,0,0,0,0,64,0,-1--1--1,,1|(1371,228)|
+1,100,59,44,1,0,0,0,0,64,0,-1--1--1,,1|(1317,422)|
+1,101,45,80,1,0,0,0,0,64,0,-1--1--1,,1|(1187,712)|
+1,102,58,80,1,0,0,0,0,64,0,-1--1--1,,1|(1405,721)|
+1,103,44,85,1,0,0,0,0,64,0,-1--1--1,,1|(1231,521)|
+1,104,59,85,1,0,0,0,0,64,0,-1--1--1,,1|(1461,546)|
+1,105,43,90,1,0,0,0,0,64,0,-1--1--1,,1|(1217,316)|
+1,106,60,90,1,0,0,0,0,64,0,-1--1--1,,1|(1405,342)|
+1,107,43,49,0,0,0,0,0,64,0,-1--1--1,,1|(1061,215)|
+1,108,60,49,0,0,0,0,0,64,0,-1--1--1,,1|(1322,214)|
+1,109,59,50,0,0,0,0,0,64,0,-1--1--1,,1|(1307,417)|
+1,110,58,45,1,0,0,0,0,64,0,-1--1--1,,1|(1267,622)|
+1,111,58,51,0,0,0,0,0,64,0,-1--1--1,,1|(1285,609)|
+1,112,57,9,1,0,0,0,0,64,0,-1--1--1,,1|(1608,1256)|
+1,113,19,70,0,0,0,0,0,64,0,-1--1--1,,1|(1463,907)|
+1,114,15,70,0,0,0,0,0,64,0,-1--1--1,,1|(1744,1021)|
+1,115,60,10,0,0,0,0,0,64,0,-1--1--1,,1|(1846,837)|
+1,116,20,75,0,0,0,0,0,64,0,-1--1--1,,1|(2155,988)|
+1,117,16,75,1,0,0,0,0,64,0,-1--1--1,,1|(2180,1162)|
+1,118,59,4,1,0,0,0,0,64,0,-1--1--1,,1|(2023,607)|
+1,119,58,4,1,0,0,0,0,64,0,-1--1--1,,1|(2015,623)|
+10,120,"Jumlah Tenaga Kerja Formall (Pop)",1951,11,70,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-0-128,0,0,0,0,0,0
+10,121,"Jumlah Tenaga Kerja Informal (Pop)",2137,283,73,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-0-128,0,0,0,0,0,0
+1,122,57,120,1,0,0,0,0,64,0,-1--1--1,,1|(1672,54)|
+1,123,60,121,1,0,0,0,0,64,0,-1--1--1,,1|(1881,213)|
+1,124,121,5,1,0,0,0,0,64,0,-1--1--1,,1|(2223,411)|
+1,125,120,5,1,0,0,0,0,64,0,-1--1--1,,1|(2327,102)|
+1,126,121,7,0,0,0,0,0,64,0,-1--1--1,,1|(2365,359)|
+1,127,120,6,0,0,0,0,0,64,0,-1--1--1,,1|(2268,127)|
+1,128,120,12,0,0,0,0,0,64,0,-1--1--1,,1|(1952,-42)|
+1,129,121,13,1,0,0,0,0,64,0,-1--1--1,,1|(2423,29)|
+10,130,Jumlah Lapangan Usaha Jasa Tinggi,4,625,122,36,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,131,48,-399,619,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,132,134,130,4,0,0,22,0,0,0,-1--1--1,,1|(-183,619)|
+1,133,134,131,100,0,0,22,0,0,0,-1--1--1,,1|(-324,619)|
+11,134,48,-254,619,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,135,Penambahan Jumlah Lapangan Usaha Jasa Tinggi,-254,646,69,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,136,48,354,622,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,137,139,136,4,0,0,22,0,0,0,-1--1--1,,1|(292,622)|
+1,138,139,130,100,0,0,22,0,0,0,-1--1--1,,1|(177,622)|
+11,139,48,235,622,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,140,Pengurangan Jumlah Lapangan Usaha Jasa Tinggi,235,649,69,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,141,32,135,0,0,0,0,0,64,0,-1--1--1,,1|(-332,716)|
+1,142,1,135,0,0,0,0,0,64,0,-1--1--1,,1|(-269,743)|
+1,143,33,135,0,0,0,0,0,64,0,-1--1--1,,1|(-190,715)|
+1,144,2,135,1,0,0,0,0,64,0,-1--1--1,,1|(-64,701)|
+1,145,130,34,1,0,0,0,0,64,0,-1--1--1,,1|(310,387)|
+1,146,130,35,1,0,0,0,0,64,0,-1--1--1,,1|(399,479)|
+1,147,130,36,1,0,0,0,0,64,0,-1--1--1,,1|(465,549)|
+10,148,Sisa Jumlah Lapangan Kerja a,795,338,58,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,149,Sisa Lapangan Kerja b,787,537,47,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,150,Sisa Lapangan Kerja c,786,760,47,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,151,34,148,0,0,0,0,0,64,0,-1--1--1,,1|(798,291)|
+1,152,43,148,0,0,0,0,0,64,0,-1--1--1,,1|(950,284)|
+1,153,35,149,0,0,0,0,0,64,0,-1--1--1,,1|(793,491)|
+1,154,44,149,0,0,0,0,0,64,0,-1--1--1,,1|(941,492)|
+1,155,36,150,0,0,0,0,0,64,0,-1--1--1,,1|(793,708)|
+1,156,45,150,0,0,0,0,0,64,0,-1--1--1,,1|(938,707)|
+1,157,150,140,0,0,0,0,0,64,0,-1--1--1,,1|(528,707)|
+1,158,149,140,0,0,0,0,0,64,0,-1--1--1,,1|(528,589)|
+1,159,148,140,0,0,0,0,0,64,0,-1--1--1,,1|(529,485)|
+10,160,Total Jumlah Kelas Menengah Bawah,2334,1525,69,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BU|0-255-0,0,0,0,0,0,0
+1,161,10,160,1,0,0,0,0,64,0,-1--1--1,,1|(1999,1555)|
+1,162,18,160,0,0,0,0,0,64,0,-1--1--1,,1|(2348,1445)|
+10,163,Persentase Tradeable Service,1802,-239,58,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,164,Persentase Nontradeable Services,2299,-231,73,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,165,12,163,0,0,0,0,0,64,0,-1--1--1,,1|(1883,-169)|
+1,166,14,163,0,0,0,0,0,64,0,-1--1--1,,1|(1954,-237)|
+1,167,13,164,0,0,0,0,0,64,0,-1--1--1,,1|(2270,-164)|
+1,168,14,164,0,0,0,0,0,64,0,-1--1--1,,1|(2169,-234)|
+10,169,Jumlah Lapangan Usaha Jasa Rendah,19,1049,128,45,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,170,48,-400,1033,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,171,173,169,4,0,0,22,0,0,0,-1--1--1,,1|(-176,1033)|
+1,172,173,170,100,0,0,22,0,0,0,-1--1--1,,1|(-323,1033)|
+11,173,48,-250,1033,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,174,Penambahan Jumlah Lapangan Usaha Jasa Rendah,-250,1069,69,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,175,Spillover Lapangan Usaha Jasa Tinggi ke Jasa Rendah,-344,921,87,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,176,175,174,1,0,0,0,0,64,0,-1--1--1,,1|(-347,1008)|
+10,177,Jumlah Angkatan Kerja,2431,558,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,178,5,177,0,0,0,0,0,64,0,-1--1--1,,1|(2381,491)|
+1,179,4,177,0,0,0,0,0,64,0,-1--1--1,,1|(2350,610)|
+1,180,177,8,0,0,0,0,0,64,0,-1--1--1,,1|(2512,604)|
+10,181,Rasio XXB,170,757,37,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,182,Rasio YYC,298,753,38,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,183,"Jumlah Lapangan Kerja Informal u Tenaaga kerja BARU High Skilled (b) (Pop)",794,851,104,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,184,Rasio XB,1078,937,32,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,185,"Jumlah Lapangan Kerja Informal u Tenaga Kerja BARU Low Skilled (c) (Pop)",772,1045,104,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,186,Rasio YC,1078,1109,32,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,187,169,183,1,0,0,0,0,64,0,-1--1--1,,1|(478,879)|
+1,188,181,183,0,0,0,0,0,64,0,-1--1--1,,1|(441,797)|
+1,189,169,185,1,0,0,0,0,64,0,-1--1--1,,1|(520,985)|
+1,190,182,185,1,0,0,0,0,64,0,-1--1--1,,1|(562,963)|
+10,191,"Jumlah Konversi tenaga kerja BARU High Skilled menuju Informal (Pop)",1060,791,94,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,192,"Jumlah konversi tenaga kerja BARU Low Skilled menuju Informal (Pop)",1060,1015,92,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,193,183,184,0,0,0,0,0,64,0,-1--1--1,,1|(959,900)|
+1,194,59,184,1,0,0,0,0,64,0,-1--1--1,,1|(1260,865)|
+1,195,185,186,0,0,0,0,0,64,0,-1--1--1,,1|(954,1082)|
+1,196,58,186,1,0,0,0,0,64,0,-1--1--1,,1|(1242,1045)|
+1,197,184,191,0,0,0,0,0,64,0,-1--1--1,,1|(1070,879)|
+1,198,59,191,1,0,0,0,0,64,0,-1--1--1,,1|(1254,815)|
+1,199,191,65,0,0,0,0,0,64,0,-1--1--1,,1|(1512,558)|
+1,200,58,192,0,0,0,0,0,64,0,-1--1--1,,1|(1353,835)|
+1,201,186,192,0,0,0,0,0,64,0,-1--1--1,,1|(1071,1077)|
+1,202,192,65,0,0,0,0,0,64,0,-1--1--1,,1|(1510,672)|
+1,203,184,85,1,0,0,0,0,64,0,-1--1--1,,1|(1209,548)|
+1,204,186,80,1,0,0,0,0,64,0,-1--1--1,,1|(1239,753)|
+12,205,656268,-1374,-81,441,373,3,188,0,0,2,0,0,0,0,0,0,0,0,0
+"PDRB Sektor Jasa (Rp)",Graph
+12,206,917684,-502,-63,395,401,3,188,0,0,2,0,0,0,0,0,0,0,0,0
+"PDRB Tradeable Services (Rp)",Graph
+12,207,591860,-1376,691,448,359,3,188,0,0,2,0,0,0,0,0,0,0,0,0
+"PDRB NonTradeable Services (Rp)",Graph
+12,208,722276,500,-201,360,278,3,188,0,0,2,0,0,0,0,0,0,0,0,0
+"Jumlah Tenaga Kerja Formall (Pop)",Graph
+12,209,787520,-1205,1351,602,276,3,188,0,0,2,0,0,0,0,0,0,0,0,0
+"Jumlah Tenaga Kerja Informal (Pop)",Graph
+1,210,57,174,0,0,0,0,0,64,0,-1--1--1,,1|(651,605)|
+10,211,"Jumlah Penduduk (Pop)",1704,216,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,212,211,60,0,0,0,0,0,64,1,-1--1--1,,1|(1683,240)|
+///---\\\
+:L<%^E!@
+1:Current.vdfx
+9:Current
+23:0
+15:0,0,0,0,0,0
+19:49,0
+27:0,
+34:0,
+42:0
+72:0
+73:0
+4:Time
+5:"Jumlah Lapangan Kerja Formal u Tenaga Kerja BARU High Skilled (b) (Pop)"
+35:Date
+36:YYYY-MM-DD
+37:2000
+38:1
+39:1
+40:0
+41:0
+76:0
+77:0
+78:0
+79:0
+80:0
+81:0
+24:2025
+25:2045
+26:2045
+75:
+43:
