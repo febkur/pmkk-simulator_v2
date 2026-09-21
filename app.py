@@ -1563,7 +1563,7 @@ def render_simulator(upload: dict) -> None:
                 if len(saved_scenarios) >= MAX_SAVED_SCENARIOS:
                     st.caption(f"Maksimum {MAX_SAVED_SCENARIOS} skenario tersimpan. Hapus skenario untuk membuat yang baru.")
                 else:
-                    st.caption("Geser slider untuk melihat dampak.")
+                    st.caption("Geser slider untuk melihat skenario.")
 
     with graph_col:
         with st.container(key="chart_panel"):
