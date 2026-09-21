@@ -464,7 +464,7 @@ SIMULATOR_CSS = """
 """
 
 
-SAMPLE_PATH = Path(__file__).parent / "sample" / "simple_population.mdl"
+SAMPLE_PATH = Path(__file__).parent / "sample" / "Testing_2.mdl"
 MAX_SAVED_SCENARIOS = 3
 
 DIRECTORATE_ORDER = ["PKKS", "KJS", "NAKER", "KSE", "KUMKM"]
@@ -1436,7 +1436,7 @@ def render_upload_screen() -> None:
                 st.download_button(
                     "Sample file .mdl",
                     data=SAMPLE_PATH.read_bytes(),
-                    file_name="simple_population.mdl",
+                    file_name="Testing_2.mdl",
                     mime="text/plain",
                     use_container_width=True,
                 )
