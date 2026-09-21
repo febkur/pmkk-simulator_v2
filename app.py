@@ -1673,12 +1673,6 @@ def render_simulator(upload: dict) -> None:
                         "Simulasi Vensim tetap dapat digunakan."
                     )
 
-            if ungrouped_count:
-                st.caption(
-                    f"{ungrouped_count} output belum diberi tag direktorat dan belum ditampilkan. "
-                    "Tambahkan directorate=PKKS, KJS, NAKER, KSE, atau KUMKM pada Comment @output di Vensim."
-                )
-
             if missing_indicator_count:
                 st.caption(
                     f"{missing_indicator_count} output sudah memiliki direktorat tetapi belum memiliki indicator=. "
