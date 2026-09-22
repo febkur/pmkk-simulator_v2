@@ -486,7 +486,7 @@ DIRECTORATE_SHORT_LABELS = {
 }
 
 DIRECTORATE_SUBTITLES = {
-    "PKKS": "Kemiskinan & Kesejahteraan Sosial",
+    "PKKS": "Penanggulangan Kemiskinan & Kesejahteraan Sosial",
     "KJS": "Kependudukan & Jaminan Sosial",
     "NAKER": "Ketenagakerjaan",
     "KSE": "Kemandirian Sosial & Ekonomi",
