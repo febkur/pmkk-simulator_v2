@@ -464,7 +464,7 @@ SIMULATOR_CSS = """
 """
 
 
-SAMPLE_PATH = Path(__file__).parent / "sample" / "Testing_2.mdl"
+SAMPLE_PATH = Path(__file__).parent / "sample" / "DynamicSystemPMKK_28092026_2.mdl"
 MAX_SAVED_SCENARIOS = 3
 
 DIRECTORATE_ORDER = ["PKKS", "KJS", "NAKER", "KSE", "KUMKM"]
@@ -1436,7 +1436,7 @@ def render_upload_screen() -> None:
                 st.download_button(
                     "Sample file .mdl",
                     data=SAMPLE_PATH.read_bytes(),
-                    file_name="Testing_2.mdl",
+                    file_name="DynamicSystemPMKK_28092026_2.mdl",
                     mime="text/plain",
                     use_container_width=True,
                 )
