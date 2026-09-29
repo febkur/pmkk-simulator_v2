@@ -1624,7 +1624,7 @@ def render_upload_screen() -> None:
 
         with st.container(key="sample_download"):
             st.download_button(
-                "Sample file .mdl",
+                "DynamicSystemPMK_29092026.mdl",
                 data=sample_bytes,
                 file_name="DynamicSystemPMK_29092026.mdl",
                 mime="text/plain",
