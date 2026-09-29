@@ -561,7 +561,7 @@ SIMULATOR_CSS = """
 """
 
 
-SAMPLE_PATH = Path(__file__).parent / "sample" / "simple_population.mdl"
+SAMPLE_PATH = Path(__file__).parent / "sample" / "DynamicSystemPMKK_29062026.mdl"
 MAX_SAVED_SCENARIOS = 3
 
 DIRECTORATE_ORDER = ["PKKS", "KJS", "NAKER", "KSE", "KUMKM"]
