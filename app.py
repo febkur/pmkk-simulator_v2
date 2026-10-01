@@ -1626,7 +1626,7 @@ def render_upload_screen() -> None:
             st.download_button(
                 "Sample file .mdl",
                 data=sample_bytes,
-                file_name="simple_population.mdl",
+                file_name="DynamicSystemPMKK_29092026.mdl",
                 mime="text/plain",
                 use_container_width=True,
                 help="Download a small self-contained Vensim model for testing the simulator.",
