@@ -561,7 +561,7 @@ SIMULATOR_CSS = """
 """
 
 
-SAMPLE_PATH = Path(__file__).parent / "sample" / "simple_population.mdl"
+SAMPLE_PATH = Path(__file__).parent / "sample" / "DynamicSystemPMKK_29092026.mdl"
 
 # Embedded fallback so the sample button never disappears even if the
 # sample/ folder is accidentally omitted from a GitHub commit.
@@ -641,7 +641,7 @@ DIRECTORATE_SHORT_LABELS = {
 }
 
 DIRECTORATE_SUBTITLES = {
-    "PKKS": "Kemiskinan & Kesejahteraan Sosial",
+    "PKKS": "Penanggulangan Kemiskinan & Kesejahteraan Sosial",
     "KJS": "Kependudukan & Jaminan Sosial",
     "NAKER": "Ketenagakerjaan",
     "KSE": "Kemandirian Sosial & Ekonomi",
