@@ -1,0 +1,848 @@
+{UTF-8}
+"Tingkat Kemiskinan Ekstrem (dmnl)"=
+	"Jumlah Penduduk Miskin Ekstrem (Pop)"/"Jumlah Penduduk Total (Pop)"
+	~	dmnl
+	~	@output directorate=PKKS indicator=2
+	|
+
+"Proporsi Penduduk Kelas Menengah (dmnl)"=
+	("Jumlah Working Poor (Pop)"+"Jumlah Kelas Menengah (Pop)"+"Jumlah Kelas Atas (Pop)"\
+		)/"Jumlah Penduduk Total (Pop)"
+	~	dmnl
+	~	@output directorate=KJS indicator=25
+	|
+
+"Jumlah Pekerja tidak terserap Lapangan Kerja Formal (Pop)"=
+	"Jumlah Penduduk Usia Kerja (Pop)"-"Penyerapan Tenaga Kerja Formal (Pop)"
+	~	Pop
+	~		|
+
+"Tingkat Kemiskinan (dmnl)"=
+	"Jumlah Penduduk Miskin (Pop)"/"Jumlah Penduduk Total (Pop)"
+	~	dmnl
+	~	@output directorate=PKKS indicator=1
+	|
+
+"Penyerapan Tenaga Kerja Informal (Pop)"=
+	IF THEN ELSE( "Jumlah Lapangan Usaha Nonformal (Pop)"> "Jumlah Pekerja tidak terserap Lapangan Kerja Formal (Pop)"\
+		, "Jumlah Pekerja tidak terserap Lapangan Kerja Formal (Pop)", "Jumlah Lapangan Usaha Nonformal (Pop)"\
+		  )
+	~	Pop
+	~	@output directorate=KSE indicator=61
+	|
+
+"Proporsi Jumlah Usaha Kecil dan Menengah (dmnl)"=
+	("Jumlah Usaha Mikro dan Kecil (Unit)"+"Jumlah Usaha Menengah (Unit)")/("Jumlah Usaha Mikro dan Kecil (Unit)"\
+		+"Jumlah Usaha Menengah (Unit)"
+	+"Jumlah Usaha Besar Korporasi (Unit)")
+	~	dmnl
+	~	@output directorate=KUMKM indicator=52
+	|
+
+"Indeks kesejahteraan sosial untuk penduduk lanjut usia (dmnl)"=
+	"Mobilitas Penduduk Lanjut Usia (Pop)"
+	~	Pop
+	~	@output directorate=PKKS indicator=5
+	|
+
+"Mobilitas Penduduk Lanjut Usia (Pop)"=
+	"Jumlah Penduduk Lansia (Pop)"*"Proporsi Penduduk Kelas Menengah (dmnl)"
+	~	Pop
+	~	@output directorate=PKKS indicator=3
+	|
+
+"Proporsi Pelaku Usaha dengan Usaha Berbadan Hukum atau Memiliki Catatan Pembukuan Lengkap (dmnl)"\
+		=
+	("Jumlah Usaha Besar Korporasi (Unit)"+"Jumlah Usaha Menengah (Unit)")/("Jumlah Usaha Mikro dan Kecil (Unit)"\
+		+"Jumlah Usaha Menengah (Unit)"+"Jumlah Usaha Besar Korporasi (Unit)")
+	~	dmnl
+	~	@output directorate=KUMKM indicator=58
+	|
+
+"Tingkat Daya Saing (dmnl)"=
+	0.1
+	~	dmnl
+	~	@input step=0.1
+	|
+
+"Jumlah Lapangan Kerja Low Value Added Primary (Pop)"=
+	DELAY1( 25/100*"Investasi Sektor Primer (Rp)" , 1 )
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja Low Value Added Service (Pop)"=
+	DELAY1( 30/100*"Investasi Low Value Added Service (Rp)" + 3.3*"Jumlah Kelas Menengah (Pop)"\
+		, 1 )
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Usaha Formal (Pop)"= INTEG (
+	"Penambahan Jumlah Lapangan Kerja Formal (Pop)"-Pengurangan Jumlah Lapangan Kerja Formal\
+		,
+		0)
+	~	Pop
+	~	@output directorate=Naker indicator=43
+	|
+
+"Jumlah Lapangan Kerja Low Value Added Manufacturing (Pop)"=
+	DELAY3( 20/100*"Investasi Low Value Added Manufacturing (Rp)" , 1.5 )
+	~	Pop
+	~		|
+
+"Indeks kesejahteraan sosial untuk penyandang disabilitas (dmnl)"=
+	"Mobilitas Penduduk Penyandang Disabilitas (dmnl)"
+	~	dmnl
+	~		|
+
+"Rate Pengurangan Penyerapan Tenaga Kerja (dmnl)"=
+	0.1
+	~	dmnl
+	~		|
+
+"Proporsi UMKM yang Memiliki Izin Usaha (dmnl)"=
+	"Jumlah Usaha Menengah (Unit)"/("Jumlah Usaha Mikro dan Kecil (Unit)"+"Jumlah Usaha Menengah (Unit)"\
+		)
+	~	dmnl
+	~	@output directorate=KUMKM indicator=55
+	|
+
+"Jumlah Lapangan Kerja High Value Added Service (Pop)"=
+	DELAY3( 10/100*"Investasi High Value Added Service (Rp)" , 1.5 )
+	~	Pop
+	~		|
+
+"Penambahan Jumlah Lapangan Kerja Formal (Pop)"=
+	"Jumlah Lapangan Kerja High Value Added Manufacturing (Pop)"+"Jumlah Lapangan Kerja High Value Added Service (Pop)"\
+		+"Jumlah Lapangan Kerja dari Usaha Menengah (Pop)"
+	+"Jumlah Lapangan Kerja dari Usaha Besar/Korporasi (Pop)"+"Jumlah Lapangan Kerja dari Startup (Pop)"
+	~	Pop
+	~		|
+
+"Penyerapan Tenaga Kerja Formal (Pop)"=
+	IF THEN ELSE( 0.9*"Jumlah Lapangan Usaha Formal (Pop)">0.9*"Jumlah Tenaga Kerja Keterampilan Tinggi (Pop)"\
+		+0.5*"Jumlah Tenaga Kerja Keterampilan Menengah (Pop)"+0.1*"Jumlah Tenaga Kerja Keterampilan Rendah (Pop)"\
+		 , 0.9*"Jumlah Tenaga Kerja Keterampilan Tinggi (Pop)"+0.5*"Jumlah Tenaga Kerja Keterampilan Menengah (Pop)"
+	+0.1*"Jumlah Tenaga Kerja Keterampilan Rendah (Pop)" , 0.9*"Jumlah Lapangan Usaha Formal (Pop)"\
+		)
+	~	Pop
+	~	@output directorate=Naker indicator=42
+	|
+
+Pengurangan Jumlah Lapangan Kerja Formal=
+	"Jumlah Lapangan Usaha Formal (Pop)"*(1+"Cost of Compliance/Regulation + Investment Impediment +Uncertainty + Corruption (dmnl)"
+	+"Rate Pengurangan Penyerapan Tenaga Kerja (dmnl)"-"Tingkat Daya Saing (dmnl)")
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja High Value Added Manufacturing (Pop)"=
+	DELAY3( 15/100*"Investasi High Value Added Manufacturing (Rp)" , 1.5 )
+	~	Pop
+	~		|
+
+"Persentase PBPU Jamsos Naker (dmnl)"=
+	1-Persentase PPU Jamsos Naker
+	~	dmnl
+	~	@output directorate=NAKER indicator=49
+	|
+
+"Pengurangan Jumlah Kelas Menengah (Pop)"=
+	("Jumlah Kelas Menengah (Pop)"*("Inflasi (dmnl)"+Kerawanan Bencana Alam dan Non Alam\
+		))+"Jumlah Kelas Atas (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Penyandang Disabilitas bekerja di sektor formal (Pop)"=
+	IF THEN ELSE( 0.1*"Jumlah Lapangan Usaha Formal (Pop)">8.5/100*"Jumlah Penduduk Usia Kerja (Pop)"\
+		 , 8.5/100*"Jumlah Penduduk Usia Kerja (Pop)" , 0.1*"Jumlah Lapangan Usaha Formal (Pop)"\
+		 )
+	~	dmnl
+	~	@output directorate=PKKS indicator=14
+	|
+
+"Jumlah Usaha Mikro dan Kecil (Unit)"=
+	0.7*"Jumlah Working Poor (Pop)"
+	~	Unit
+	~		|
+
+Kerawanan Bencana Alam dan Non Alam=
+	0.1
+	~	dmnl
+	~	@input min=0 max=1 step=0.05
+	|
+
+"Jumlah Tenaga Kerja Keterampilan Tinggi (Pop)"=
+	"Proporsi Lulusan Pendidikan Tinggi(dmnl)"*"Jumlah Penduduk Usia Kerja (Pop)"
+	~	Pop
+	~		|
+
+"Penambahan Jumlah Kelas Menengah (Pop)"=
+	DELAY1( "Penyerapan Tenaga Kerja Formal (Pop)" , 2 )
+	~	Pop
+	~		|
+
+"Pengurangan Penduduk Usia 0-15 Tahun (Pop)"=
+	"Rate Perubahan Proporsi Usia 0-15 Tahun (dmnl)"*"Jumlah Penduduk Usia 0-15 Tahun (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Penduduk Lansia (Pop)"= INTEG (
+	"Penambahan Lansia (Pop)",
+		"Proporsi Usia Lansia Awal (dmnl)"*"Jumlah Penduduk Total (Pop)")
+	~	Pop
+	~		|
+
+"Proporsi Penciptaan Lapangan Kerja (dmnl)"=
+	"Jumlah Lapangan Usaha Formal (Pop)"/("Jumlah Lapangan Usaha Formal (Pop)"+"Jumlah Lapangan Usaha Nonformal (Pop)"\
+		)
+	~	dmnl
+	~	@output directorate=NAKER indicator=39
+	|
+
+"Penambahan Lansia (Pop)"=
+	"Jumlah Penduduk Lansia (Pop)"*"Rate Perubahan Proporsi Lansia (dmnl)"
+	~	Pop
+	~		|
+
+"Jumlah Penduduk Usia 0-15 Tahun (Pop)"= INTEG (
+	-"Pengurangan Penduduk Usia 0-15 Tahun (Pop)",
+		"Proporsi Usia 0-15 Tahun Awal (dmnl)"*"Jumlah Penduduk Total (Pop)")
+	~	Pop
+	~		|
+
+"Jumlah Penduduk Usia Kerja (Pop)"= INTEG (
+	-"Pengurangan Penduduk Usia Kerja (Pop)",
+		"Proporsi Usia Kerja Awal (dmnl)"*"Jumlah Penduduk Total (Pop)")
+	~	Pop
+	~		|
+
+"Mobilitas Penduduk Penyandang Disabilitas (dmnl)"=
+	("Jumlah Penyandang Disabilitas bekerja di sektor formal (Pop)")/(8.5/100*"Jumlah Penduduk Usia Kerja (Pop)"\
+		)
+	~	dmnl
+	~	@output directorate=PKKS indicator=4
+	|
+
+"Jumlah Tenaga Kerja Keterampilan Menengah (Pop)"=
+	"Proporsi Lulusan Pendidikan Menengah (dmnl)"*"Jumlah Penduduk Usia Kerja (Pop)"
+	~	
+	~		|
+
+"Pengurangan Penduduk Usia Kerja (Pop)"=
+	"Jumlah Penduduk Usia Kerja (Pop)"*"Rate Perubahan Proporsi Usia Kerja (dmnl)"
+	~	Pop
+	~		|
+
+"Jumlah Tenaga Kerja Keterampilan Rendah (Pop)"=
+	"Proporsi Lulusan Pendidikan Dasar (dmnl)"*"Jumlah Penduduk Usia Kerja (Pop)"
+	~	Pop
+	~		|
+
+"Tingkat Pengangguran Terbuka (dmnl)"=
+	("Jumlah Penduduk Usia Kerja (Pop)"-"Penyerapan Tenaga Kerja Formal (Pop)"-"Penyerapan Tenaga Kerja Informal (Pop)"\
+		)/"Jumlah Penduduk Usia Kerja (Pop)"
+	~	dmnl
+	~	@output directorate=NAKER indicator=32
+	|
+
+"Jumlah Perusahaan yang memathui Norma Ketenagakerjaan (Unit)"=
+	"Jumlah Usaha Besar Korporasi (Unit)"+"Jumlah Usaha Menengah (Unit)"
+	~	Unit
+	~	@output directorate=NAKER indicator=45
+	|
+
+Persentase PPU Jamsos Naker=
+	"Penyerapan Tenaga Kerja Formal (Pop)"
+	~	Pop
+	~	@output directorate=NAKER indicator=50
+	|
+
+"Cakupan Jamsos Naker (Pop)"=
+	"Penyerapan Tenaga Kerja Formal (Pop)"+0.2*"Penyerapan Tenaga Kerja Informal (Pop)"
+	~	Pop
+	~	@output directorate=KJS indicator=28
+	|
+
+Asumsi Kekayaan Kelas Atas dan Menengah=
+	500000
+	~	dmnl
+	~		|
+
+Asumsi Kekayaan Kelas Miskin dan Ekstrem=
+	200000
+	~	dmnl
+	~		|
+
+Laju Pertumbuhan PDB per Tenaga Kerja=
+	"Jumlah PDB (Rp)"/("Penyerapan Tenaga Kerja Formal (Pop)"+"Penyerapan Tenaga Kerja Informal (Pop)"\
+		)
+	~	Rp/Pop
+	~	@output directorate=Naker indicator=41
+	|
+
+"Jumlah PDB (Rp)"=
+	"Jumlah PDB dari Lapangan Usaha Formal (Rp)"+"Jumlah PDB dari Lapangan Usaha Nonformal (Rp)"
+	~	Rp
+	~		|
+
+"Jumlah PDB dari Lapangan Usaha Formal (Rp)"=
+	"Rata-Rata PDB/Kapita Lapangan Usaha Formal (Rp/Pop)"*"Penyerapan Tenaga Kerja Formal (Pop)"
+	~	Rp
+	~		|
+
+"Jumlah PDB dari Lapangan Usaha Nonformal (Rp)"=
+	"Rata-rata PDB/Kapita Lapangan Usaha Nonformal (Rp/Pop)"*"Penyerapan Tenaga Kerja Informal (Pop)"
+	~	Rp
+	~		|
+
+"Jumlah Penduduk Initial (Pop)"=
+	10000
+	~	Pop
+	~	@input min=0 max=100000 step=5
+	|
+
+"Rasio Kewirausahaan (Unit/Pop)"=
+	10
+	~	Unit/Pop
+	~	@input min=0 max=100 step=5
+	|
+
+"Konversi 6 (Unit/Pop)"=
+	10
+	~	Unit/Pop
+	~		|
+
+"Konversi 7 (Unit/Pop)"=
+	10
+	~	Unit/Pop
+	~		|
+
+"Konversi 8 (Unit/Pop)"=
+	10
+	~	Unit/Pop
+	~		|
+
+"Jumlah Start Up (Unit)"=
+	DELAY1( ("Jumlah Kelas Atas (Pop)"+"Jumlah Kelas Menengah (Pop)")*"Rasio Kewirausahaan (Unit/Pop)"\
+		 , 1 )
+	~	Unit
+	~		|
+
+"Jumlah Lapangan Kerja dari Startup (Pop)"=
+	"Jumlah Start Up (Unit)"*"Konversi 6 (Unit/Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja dari Usaha Besar/Korporasi (Pop)"=
+	"Konversi 8 (Unit/Pop)"*"Jumlah Usaha Besar Korporasi (Unit)"
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Kerja dari Usaha Menengah (Pop)"=
+	"Jumlah Usaha Menengah (Unit)"*"Konversi 7 (Unit/Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Usaha Menengah (Unit)"=
+	DELAY1( "Rasio Kewirausahaan (Unit/Pop)"*"Jumlah Kelas Menengah (Pop)" , 2 )
+	~	Unit
+	~		|
+
+Rasio Gini=
+	("Jumlah Kelas Menengah (Pop)"+"Jumlah Kelas Atas (Pop)")*Asumsi Kekayaan Kelas Atas dan Menengah\
+		/(("Jumlah Kelas Menengah (Pop)"+"Jumlah Kelas Menengah (Pop)")*Asumsi Kekayaan Kelas Atas dan Menengah\
+		+"Jumlah Penduduk Miskin (Pop)"*Asumsi Kekayaan Kelas Miskin dan Ekstrem)
+	~	dmnl
+	~	@output directorate=KJS indicator=24
+	|
+
+"Rata-Rata PDB/Kapita Lapangan Usaha Formal (Rp/Pop)"=
+	0.305
+	~	Rp/Pop
+	~		|
+
+"Jumlah Usaha Besar Korporasi (Unit)"=
+	DELAY3( "Jumlah Kelas Atas (Pop)"*"Rasio Kewirausahaan (Unit/Pop)" , 3 )
+	~	Unit
+	~		|
+
+"Jumlah Penduduk Total (Pop)"= INTEG (
+	"Penambahan Jumlah Penduduk (Pop)"-"Pengurangan Jumlah Penduduk (Pop)",
+		"Jumlah Penduduk Initial (Pop)")
+	~	Pop
+	~		|
+
+"Rata-rata PDB/Kapita Lapangan Usaha Nonformal (Rp/Pop)"=
+	0.7
+	~	Rp/Pop
+	~		|
+
+"Cost of Compliance/Regulation + Investment Impediment +Uncertainty + Corruption (dmnl)"\
+		=
+	0.1
+	~	dmnl
+	~	@input min=0 max=1 step=0.1
+	|
+
+"Efek Akses dan Literasi Keuangan, Investasi, permodalan, networking (dmnl)"=
+	0.1
+	~	dmnl
+	~		|
+
+"Fertilitas (dmnl)"=
+	2.1
+	~	dmnl
+	~	@input min=1 max=10 step=0.1
+	|
+
+"Inflasi (dmnl)"=
+	0.05
+	~	dmnl
+	~	@input min=0 max=1 step=0.05
+	|
+
+"Investasi High Value Added Manufacturing (Rp)"=
+	500
+	~	Rp
+	~	@input step=5
+	|
+
+"Investasi High Value Added Service (Rp)"=
+	500
+	~	Rp
+	~	@input step=5
+	|
+
+"Investasi Low Value Added Manufacturing (Rp)"=
+	500
+	~	Rp
+	~	@input step=5
+	|
+
+"Investasi Low Value Added Service (Rp)"=
+	500
+	~	Rp
+	~	@input step=5
+	|
+
+"Investasi Sektor Primer (Rp)"=
+	500
+	~	Rp
+	~	@input step=5
+	|
+
+"Jumlah Kelas Atas (Pop)"=
+	"Jumlah Kelas Menengah (Pop)"*"Efek Akses dan Literasi Keuangan, Investasi, permodalan, networking (dmnl)"
+	~	Pop
+	~		|
+
+"Jumlah Kelas Menengah (Pop)"= INTEG (
+	"Penambahan Jumlah Kelas Menengah (Pop)"-"Pengurangan Jumlah Kelas Menengah (Pop)",
+		0)
+	~	Pop
+	~		|
+
+"Jumlah Lapangan Usaha Nonformal (Pop)"=
+	("Jumlah Lapangan Kerja Low Value Added Primary (Pop)"+"Jumlah Lapangan Kerja Low Value Added Manufacturing (Pop)"\
+		+"Jumlah Lapangan Kerja Low Value Added Service (Pop)")*(1-"Cost of Compliance/Regulation + Investment Impediment +Uncertainty + Corruption (dmnl)"\
+		)
+	~	Pop
+	~		|
+
+"Jumlah Penduduk Miskin (Pop)"=
+	"Tingkat Pengangguran Terbuka (dmnl)"+"Jumlah Working Poor (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Penduduk Miskin Ekstrem (Pop)"=
+	0.05 * "Jumlah Penduduk Miskin (Pop)"
+	~	Pop
+	~		|
+
+"Jumlah Working Poor (Pop)"=
+	"Penyerapan Tenaga Kerja Informal (Pop)"+"Pengurangan Jumlah Kelas Menengah (Pop)"
+	~	Pop
+	~		|
+
+"Mortalitias (dmnl)"=
+	2.1
+	~	dmnl
+	~	@input min=1 max=10 step=0.1
+	|
+
+"Penambahan Jumlah Penduduk (Pop)"=
+	"Jumlah Penduduk Total (Pop)"*"Fertilitas (dmnl)"
+	~	Pop
+	~		|
+
+"Pengurangan Jumlah Penduduk (Pop)"=
+	"Jumlah Penduduk Total (Pop)"*"Mortalitias (dmnl)"
+	~	Pop
+	~		|
+
+"Proporsi Lulusan Pendidikan Dasar (dmnl)"=
+	0.5729
+	~	dmnl
+	~	@input min=0 max=1 step=0.1
+	|
+
+"Proporsi Lulusan Pendidikan Menengah (dmnl)"=
+	0.3204
+	~	dmnl
+	~	@input min=0 max=1 step=0.1
+	|
+
+"Proporsi Lulusan Pendidikan Tinggi(dmnl)"=
+	0.1067
+	~	dmnl
+	~	@input min=0 max=1 step=0.1
+	|
+
+"Proporsi Usia 0-15 Tahun Awal (dmnl)"=
+	0.242
+	~	dmnl
+	~		|
+
+"Proporsi Usia Kerja Awal (dmnl)"=
+	0.683
+	~	dmnl
+	~		|
+
+"Proporsi Usia Lansia Awal (dmnl)"=
+	0.075
+	~	dmnl
+	~	@output directorate=PKKS indicator=6
+	|
+
+"Rate Perubahan Proporsi Lansia (dmnl)"=
+	0.0306
+	~	dmnl
+	~		|
+
+"Rate Perubahan Proporsi Usia 0-15 Tahun (dmnl)"=
+	0.0097
+	~	dmnl
+	~		|
+
+"Rate Perubahan Proporsi Usia Kerja (dmnl)"=
+	0.0014
+	~	dmnl
+	~	@input min=0 max=1 step=0.1
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 2045
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 2025
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 1
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,50,0
+10,1,"Jumlah Penduduk Total (Pop)",475,-266,96,17,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,2,48,235,-269,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,3,5,1,4,0,0,22,0,0,0,-1--1--1,,1|(340,-269)|
+1,4,5,2,100,0,0,22,0,0,0,-1--1--1,,1|(267,-269)|
+11,5,48,296,-269,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,6,"Penambahan Jumlah Penduduk (Pop)",296,-242,65,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,7,48,735,-269,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,8,10,7,4,0,0,22,0,0,0,-1--1--1,,1|(689,-269)|
+1,9,10,1,100,0,0,22,0,0,0,-1--1--1,,1|(606,-269)|
+11,10,48,648,-269,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,11,"Pengurangan Jumlah Penduduk (Pop)",648,-242,65,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,12,"Fertilitas (dmnl)",278,-173,58,11,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,13,"Mortalitias (dmnl)",610,-171,40,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,14,1,6,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(381,-200)|
+1,15,12,6,0,0,0,0,0,64,0,-1--1--1,,1|(283,-196)|
+1,16,1,11,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(540,-209)|
+1,17,13,11,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(625,-200)|
+10,18,"Proporsi Usia Kerja Awal (dmnl)",191,172,65,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,19,"Rate Perubahan Proporsi Usia Kerja (dmnl)",736,299,70,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,20,"Proporsi Usia 0-15 Tahun Awal (dmnl)",-19,-72,62,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,21,"Rate Perubahan Proporsi Usia 0-15 Tahun (dmnl)",157,22,80,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,22,"Proporsi Usia Lansia Awal (dmnl)",817,-154,67,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,23,"Rate Perubahan Proporsi Lansia (dmnl)",583,28,73,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,24,"Investasi High Value Added Service (Rp)",1743,1060,74,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,25,"Investasi High Value Added Manufacturing (Rp)",1538,1066,78,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,26,"Investasi Low Value Added Service (Rp)",1797,228,72,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,27,"Investasi Low Value Added Manufacturing (Rp)",1533,231,78,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,28,"Investasi Sektor Primer (Rp)",1276,229,56,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,29,"Jumlah Usaha Menengah (Unit)",2668,927,54,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,30,"Jumlah Start Up (Unit)",2384,896,52,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,31,"Inflasi (dmnl)",2505,860,48,11,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,32,"Jumlah Tenaga Kerja Keterampilan Rendah (Pop)",310,538,69,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,33,"Jumlah Tenaga Kerja Keterampilan Menengah (Pop)",316,777,78,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,"Jumlah Tenaga Kerja Keterampilan Tinggi (Pop)",331,994,84,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,35,"Proporsi Lulusan Pendidikan Dasar (dmnl)",73,534,64,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,36,"Proporsi Lulusan Pendidikan Menengah (dmnl)",80,771,80,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,37,"Proporsi Lulusan Pendidikan Tinggi(dmnl)",105,994,62,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,38,35,32,1,0,0,0,0,64,0,-1--1--1,,1|(203,543)|
+1,39,36,33,1,0,0,0,0,64,0,-1--1--1,,1|(209,769)|
+1,40,37,34,1,0,0,0,0,64,0,-1--1--1,,1|(199,994)|
+10,41,"Cost of Compliance/Regulation + Investment Impediment +Uncertainty + Corruption (dmnl)",1755,546,120,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+10,42,"Jumlah Lapangan Kerja High Value Added Manufacturing (Pop)",1538,929,92,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,43,"Jumlah Lapangan Kerja High Value Added Service (Pop)",1741,936,85,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,44,"Jumlah Lapangan Kerja Low Value Added Primary (Pop)",1277,363,86,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,45,"Jumlah Lapangan Kerja Low Value Added Manufacturing (Pop)",1536,368,92,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,46,"Jumlah Lapangan Kerja Low Value Added Service (Pop)",1805,371,85,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,47,25,42,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(1538,1004)|
+1,48,24,43,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(1742,1009)|
+1,49,28,44,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(1276,284)|
+1,50,27,45,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(1533,292)|
+1,51,26,46,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(1800,288)|
+10,52,"Jumlah Lapangan Usaha Nonformal (Pop)",1310,493,77,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,53,"Penyerapan Tenaga Kerja Informal (Pop)",767,531,73,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+10,54,"Penyerapan Tenaga Kerja Formal (Pop)",758,795,70,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,55,52,53,1,0,0,0,0,64,0,-1--1--1,,1|(1128,523)|
+1,56,32,54,1,0,0,0,0,64,0,-1--1--1,,1|(509,737)|
+1,57,33,54,1,0,0,0,0,64,0,-1--1--1,,1|(534,785)|
+1,58,34,54,1,0,0,0,0,64,0,-1--1--1,,1|(514,827)|
+1,59,44,52,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1382,401)|
+1,60,45,52,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1460,424)|
+1,61,46,52,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1546,414)|
+10,62,"Jumlah Lapangan Kerja dari Startup (Pop)",2472,1067,75,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,63,"Jumlah Lapangan Kerja dari Usaha Menengah (Pop)",2664,1077,75,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,64,30,62,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2424,975)|
+1,65,29,63,0,0,0,0,2,64,0,-1--1--1,|12||0-0-0,1|(2666,990)|
+10,66,"Jumlah Working Poor (Pop)",2390,450,52,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,67,"Jumlah Kelas Atas (Pop)",2825,754,59,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,68,"Efek Akses dan Literasi Keuangan, Investasi, permodalan, networking (dmnl)",2812,613,99,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,69,68,67,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2808,695)|
+1,70,53,66,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1623,87)|
+10,71,"Konversi 6 (Unit/Pop)",2470,1180,36,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,72,"Konversi 7 (Unit/Pop)",2665,1194,36,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,73,71,62,0,0,0,0,0,64,0,-1--1--1,,1|(2470,1130)|
+1,74,72,63,0,0,0,0,0,64,0,-1--1--1,,1|(2664,1146)|
+1,75,41,52,0,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(1517,517)|
+10,76,"Tingkat Pengangguran Terbuka (dmnl)",644,1110,55,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,77,53,76,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(579,923)|
+1,78,54,76,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(605,1021)|
+10,79,"Jumlah Usaha Mikro dan Kecil (Unit)",2624,451,66,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,80,66,79,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2493,450)|
+10,81,"Jumlah Kelas Menengah (Pop)",2386,763,103,24,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,82,48,2024,778,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,83,85,81,4,0,0,22,0,0,0,-1--1--1,,1|(2246,764)|
+1,84,85,82,100,0,0,22,0,0,0,-1--1--1,,1|(2024,764)|
+11,85,48,2204,764,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,86,"Penambahan Jumlah Kelas Menengah (Pop)",2204,791,74,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,87,48,2624,765,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,88,90,87,4,0,0,22,0,0,0,-1--1--1,,1|(2585,765)|
+1,89,90,81,100,0,0,22,0,0,0,-1--1--1,,1|(2517,765)|
+11,90,48,2551,765,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,91,"Pengurangan Jumlah Kelas Menengah (Pop)",2551,792,74,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,92,81,91,1,0,0,0,0,64,0,-1--1--1,,1|(2425,810)|
+1,93,31,91,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(2512,845)|
+1,94,91,66,1,0,0,0,0,64,0,-1--1--1,,1|(2557,651)|
+1,95,81,67,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2568,660)|
+1,96,81,30,1,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(2349,812)|
+1,97,81,29,1,0,0,0,2,65,0,-1--1--1,|12||0-0-0,1|(2431,865)|
+1,98,67,30,1,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(2738,846)|
+10,99,"Jumlah Usaha Besar Korporasi (Unit)",2827,914,65,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,100,67,99,0,0,43,0,2,65,0,-1--1--1,|12||0-0-0,1|(2825,827)|
+10,101,"Jumlah Lapangan Kerja dari Usaha Besar/Korporasi (Pop)",2825,1071,90,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,102,99,101,0,0,0,0,2,64,0,-1--1--1,|12||0-0-0,1|(2826,981)|
+10,103,"Konversi 8 (Unit/Pop)",2835,1187,36,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,104,103,101,0,0,0,0,0,64,0,-1--1--1,,1|(2831,1140)|
+10,105,"Jumlah Penyandang Disabilitas bekerja di sektor formal (Pop)",804,132,75,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+10,106,"Rata-rata PDB/Kapita Lapangan Usaha Nonformal (Rp/Pop)",1311,1560,90,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,107,"Rata-Rata PDB/Kapita Lapangan Usaha Formal (Rp/Pop)",827,1573,78,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,108,"Jumlah PDB dari Lapangan Usaha Formal (Rp)",828,1676,78,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,109,"Jumlah PDB dari Lapangan Usaha Nonformal (Rp)",1321,1693,54,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,110,"Jumlah PDB (Rp)",1091,1828,56,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,111,106,109,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1315,1619)|
+1,112,107,108,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(827,1617)|
+1,113,108,110,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(967,1756)|
+1,114,109,110,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1197,1765)|
+10,115,Laju Pertumbuhan PDB per Tenaga Kerja,1073,1516,80,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,116,110,115,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1082,1682)|
+1,117,54,108,1,0,0,0,0,64,0,-1--1--1,,1|(1013,1244)|
+1,118,53,109,1,0,0,0,0,64,0,-1--1--1,,1|(1117,1055)|
+1,119,54,115,1,0,0,0,0,64,0,-1--1--1,,1|(1020,1119)|
+1,120,53,115,1,0,0,0,0,64,0,-1--1--1,,1|(1074,1189)|
+10,121,"Jumlah Penduduk Miskin (Pop)",2388,329,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,122,"Jumlah Penduduk Miskin Ekstrem (Pop)",2388,199,71,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,123,66,121,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2389,396)|
+1,124,121,122,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2388,271)|
+1,125,76,121,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(3259,1056)|
+10,126,Rasio Gini,3048,324,39,11,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+10,127,Asumsi Kekayaan Kelas Atas dan Menengah,3189,232,79,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,128,Asumsi Kekayaan Kelas Miskin dan Ekstrem,3015,226,79,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,129,121,126,0,0,0,0,0,64,0,-1--1--1,,1|(2719,326)|
+1,130,67,126,1,0,0,0,0,64,0,-1--1--1,,1|(3040,398)|
+1,131,128,126,1,0,0,0,0,64,0,-1--1--1,,1|(3064,239)|
+1,132,127,126,1,0,0,0,0,64,0,-1--1--1,,1|(3107,282)|
+10,133,"Proporsi Penciptaan Lapangan Kerja (dmnl)",1354,614,82,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,134,52,133,0,0,0,0,0,64,0,-1--1--1,,1|(1329,546)|
+10,135,"Mobilitas Penduduk Penyandang Disabilitas (dmnl)",997,35,84,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,136,105,135,0,0,0,0,0,64,0,-1--1--1,,1|(893,88)|
+1,137,81,46,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1885,384)|
+1,138,81,126,1,0,0,0,0,64,0,-1--1--1,,1|(2885,382)|
+10,139,"Rasio Kewirausahaan (Unit/Pop)",2751,1004,78,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,140,139,30,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2528,977)|
+1,141,139,29,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2714,970)|
+1,142,139,99,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(2812,941)|
+10,143,"Jumlah Penduduk Initial (Pop)",470,-356,65,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,144,143,1,0,0,0,0,0,64,1,-1--1--1,,1|(472,-316)|
+10,145,"Cakupan Jamsos Naker (Pop)",968,565,60,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,146,53,145,1,0,0,0,0,64,0,-1--1--1,,1|(862,561)|
+1,147,54,145,1,0,0,0,0,64,0,-1--1--1,,1|(786,626)|
+10,148,"Jumlah Perusahaan yang memathui Norma Ketenagakerjaan (Unit)",3466,1094,90,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,149,29,148,1,0,0,0,0,64,0,-1--1--1,,1|(3020,1048)|
+1,150,99,148,1,0,0,0,0,64,0,-1--1--1,,1|(3080,1044)|
+10,151,Persentase PPU Jamsos Naker,977,618,57,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,152,54,151,1,0,0,0,0,64,0,-1--1--1,,1|(773,657)|
+10,153,"Jumlah Penduduk Usia 0-15 Tahun (Pop)",179,-71,88,30,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,154,48,417,-72,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,155,157,154,4,0,0,22,0,0,0,-1--1--1,,1|(390,-72)|
+1,156,157,153,100,0,0,22,0,0,0,-1--1--1,,1|(314,-72)|
+11,157,48,367,-72,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,158,"Pengurangan Penduduk Usia 0-15 Tahun (Pop)",367,-45,75,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,159,20,153,0,0,0,0,0,64,1,-1--1--1,,1|(60,-71)|
+1,160,21,158,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(293,-2)|
+1,161,153,158,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(235,-26)|
+1,162,1,153,1,0,0,0,0,64,1,-1--1--1,,1|(385,-134)|
+10,163,"Jumlah Penduduk Lansia (Pop)",813,-60,67,23,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+12,164,48,603,-63,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,165,167,163,4,0,0,22,0,0,0,-1--1--1,,1|(706,-63)|
+1,166,167,164,100,0,0,22,0,0,0,-1--1--1,,1|(633,-63)|
+11,167,48,660,-63,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,168,"Penambahan Lansia (Pop)",660,-36,42,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,169,22,163,1,0,0,0,0,64,1,-1--1--1,,1|(804,-83)|
+1,170,23,168,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(668,8)|
+1,171,163,168,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(724,-2)|
+1,172,1,163,1,0,0,0,0,64,1,-1--1--1,,1|(616,-122)|
+10,173,"Jumlah Penduduk Usia Kerja (Pop)",469,172,76,30,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,174,1,173,0,0,0,0,0,64,1,-1--1--1,,1|(472,-60)|
+1,175,18,173,1,0,0,0,0,64,1,-1--1--1,,1|(325,152)|
+12,176,48,713,189,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,177,179,176,4,0,0,22,0,0,0,-1--1--1,,1|(675,182)|
+1,178,179,173,100,0,0,22,0,0,0,-1--1--1,,1|(590,182)|
+11,179,48,641,182,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,180,"Pengurangan Penduduk Usia Kerja (Pop)",641,218,75,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,181,173,180,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(506,221)|
+1,182,19,180,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(636,273)|
+1,183,173,105,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(653,110)|
+1,184,173,32,1,0,0,0,0,64,0,-1--1--1,,1|(259,334)|
+1,185,173,33,1,0,0,0,0,64,0,-1--1--1,,1|(164,512)|
+1,186,173,34,1,0,0,0,0,64,0,-1--1--1,,1|(96,538)|
+1,187,173,135,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(821,43)|
+10,188,"Jumlah Lapangan Usaha Formal (Pop)",1368,773,131,35,3,131,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+12,189,48,1681,781,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,190,192,188,4,0,0,22,0,0,0,-1--1--1,,1|(1555,777)|
+1,191,192,189,100,0,0,22,0,0,0,-1--1--1,,1|(1647,777)|
+11,192,48,1617,777,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,193,"Penambahan Jumlah Lapangan Kerja Formal (Pop)",1617,813,77,28,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,194,42,193,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1573,876)|
+1,195,43,193,0,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1683,879)|
+1,196,54,86,1,0,0,0,2,65,0,-1--1--1,|12||0-0-0,1|(1440,663)|
+1,197,188,133,0,0,0,0,0,64,0,-1--1--1,,1|(1360,692)|
+1,198,62,193,1,0,0,0,0,64,0,-1--1--1,,1|(2100,904)|
+1,199,63,193,0,0,0,0,0,64,0,-1--1--1,,1|(2148,947)|
+1,200,101,193,0,0,0,0,0,64,0,-1--1--1,,1|(2221,941)|
+1,201,173,76,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(-63,1076)|
+1,202,67,91,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(2692,790)|
+10,203,Kerawanan Bencana Alam dan Non Alam,2638,855,74,19,8,131,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,204,203,91,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(2558,826)|
+1,205,188,105,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(983,432)|
+12,206,984638,2043,1140,150,150,3,44,0,0,2,0,0,0,0,0,0,0,0,0
+"Jumlah Kelas Menengah (Pop)",Graph
+10,207,"Rate Pengurangan Penyerapan Tenaga Kerja (dmnl)",1264,934,83,28,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+12,208,48,1129,777,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,209,211,208,4,0,0,22,0,0,0,-1--1--1,,1|(1160,777)|
+1,210,211,188,100,0,0,22,0,0,0,-1--1--1,,1|(1215,777)|
+11,211,48,1188,777,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,212,Pengurangan Jumlah Lapangan Kerja Formal,1188,804,77,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,213,188,54,1,0,43,0,2,64,0,-1--1--1,|12||0-0-0,1|(1057,892)|
+1,214,41,212,1,0,0,0,0,64,0,-1--1--1,,1|(1386,632)|
+1,215,207,212,1,0,0,0,0,64,0,-1--1--1,,1|(1198,813)|
+1,216,188,212,1,0,0,0,0,64,0,-1--1--1,,1|(1304,837)|
+10,217,"Tingkat Daya Saing (dmnl)",1115,930,49,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-0-255,0,0,0,0,0,0
+1,218,217,212,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(1113,871)|
+10,219,"Indeks kesejahteraan sosial untuk penyandang disabilitas (dmnl)",1249,22,96,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,220,135,219,1,0,0,0,0,64,0,-1--1--1,,1|(1142,-22)|
+10,221,"Proporsi Jumlah Usaha Kecil dan Menengah (dmnl)",3445,738,84,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,222,79,221,0,0,0,0,0,64,0,-1--1--1,,1|(3014,587)|
+1,223,29,221,1,0,0,0,0,64,0,-1--1--1,,1|(3006,802)|
+1,224,99,221,1,0,0,0,0,64,0,-1--1--1,,1|(3084,792)|
+10,225,"Proporsi UMKM yang Memiliki Izin Usaha (dmnl)",3452,873,77,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,226,29,225,1,0,0,0,0,64,0,-1--1--1,,1|(3410,841)|
+1,227,79,225,1,0,0,0,0,64,0,-1--1--1,,1|(3200,691)|
+10,228,"Persentase PBPU Jamsos Naker (dmnl)",977,675,74,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,229,151,228,0,0,0,0,0,64,0,-1--1--1,,1|(977,639)|
+10,230,"Proporsi Penduduk Kelas Menengah (dmnl)",2382,603,84,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,231,81,230,1,0,0,0,0,64,0,-1--1--1,,1|(2398,683)|
+1,232,66,230,0,0,0,0,0,64,0,-1--1--1,,1|(2386,519)|
+1,233,67,230,1,0,0,0,0,64,0,-1--1--1,,1|(2540,572)|
+10,234,"Mobilitas Penduduk Lanjut Usia (Pop)",1026,-143,71,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,235,163,234,1,0,0,0,0,64,0,-1--1--1,,1|(877,-117)|
+10,236,"Indeks kesejahteraan sosial untuk penduduk lanjut usia (dmnl)",1250,-147,98,28,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,237,230,234,1,0,0,0,0,64,0,-1--1--1,,1|(1594,-211)|
+1,238,234,236,0,0,0,0,0,64,0,-1--1--1,,1|(1117,-144)|
+10,239,"Proporsi Pelaku Usaha dengan Usaha Berbadan Hukum atau Memiliki Catatan Pembukuan Lengkap (dmnl)",3453,983,109,38,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,240,79,239,1,0,0,0,0,64,0,-1--1--1,,1|(3017,703)|
+1,241,29,239,1,0,0,0,0,64,0,-1--1--1,,1|(3063,839)|
+1,242,99,239,1,0,0,0,0,64,0,-1--1--1,,1|(3184,884)|
+10,243,"Tingkat Kemiskinan Ekstrem (dmnl)",2268,11,72,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+10,244,"Tingkat Kemiskinan (dmnl)",2268,131,68,19,8,3,0,18,0,0,0,0,-1--1--1,0-0-0,|12|BI|0-128-0,0,0,0,0,0,0
+1,245,122,243,1,0,0,0,0,64,0,-1--1--1,,1|(2380,34)|
+1,246,121,244,1,0,0,0,0,64,0,-1--1--1,,1|(2283,228)|
+10,247,"Jumlah Pekerja tidak terserap Lapangan Kerja Formal (Pop)",503,530,80,28,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,248,173,247,1,0,0,0,0,64,0,-1--1--1,,1|(287,327)|
+1,249,54,247,1,0,0,0,0,64,0,-1--1--1,,1|(539,692)|
+1,250,247,53,1,0,0,0,0,64,0,-1--1--1,,1|(618,526)|
+1,251,1,243,1,0,0,0,0,64,0,-1--1--1,,1|(1686,-305)|
+1,252,1,244,1,0,0,0,0,64,0,-1--1--1,,1|(1355,-360)|
+1,253,1,230,1,0,0,0,0,64,0,-1--1--1,,1|(1663,-233)|
+///---\\\
+:L<%^E!@
+1:Current
+9:Current
+23:0
+15:0,0,0,0,0,0
+19:50,0
+27:0,
+34:0,
+42:1
+72:0
+73:0
+4:Time
+5:Asumsi Kekayaan Kelas Atas dan Menengah
+35:Date
+36:YYYY-MM-DD
+37:2000
+38:1
+39:1
+40:0
+41:0
+76:1
+77:1
+78:0
+79:1
+80:1
+81:0
+24:2025
+25:2045
+26:2045
+75:
+43:
