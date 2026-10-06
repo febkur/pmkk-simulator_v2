@@ -561,7 +561,7 @@ SIMULATOR_CSS = """
 """
 
 
-SAMPLE_PATH = Path(__file__).parent / "sample" / "DynamicSystemPMKK_29092026.mdl"
+SAMPLE_PATH = Path(__file__).parent / "sample" / "Dynamic System PMKK Final.mdl"
 
 # Embedded fallback so the sample button never disappears even if the
 # sample/ folder is accidentally omitted from a GitHub commit.
@@ -1626,7 +1626,7 @@ def render_upload_screen() -> None:
             st.download_button(
                 "Sample file .mdl",
                 data=sample_bytes,
-                file_name="DynamicSystemPMKK_29092026.mdl",
+                file_name="File Dynamic System PMKK.mdl",
                 mime="text/plain",
                 use_container_width=True,
                 help="Download a small self-contained Vensim model for testing the simulator.",
